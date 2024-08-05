@@ -1,0 +1,8 @@
+# 환경과 관련된 파일
+/.gradle/
+/gradle/
+/.idea/
+# 빌드와 관련된 파일
+/build/
+/bin/
+/out/
