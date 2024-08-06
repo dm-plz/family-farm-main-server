@@ -12,9 +12,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CommonException.class)
-    public ResponseEntity<Object> authenticationError(CommonException e) {
+    public ResponseEntity<ErrorResponse> commonError(CommonException e) {
         ErrorCode errorCode = e.getErrorCode();
-        return handleExceptionInternal(errorCode, e.getMessage(), e.getData());
+        return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
     }
 
     /**
@@ -35,7 +35,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     /**
      * Exception에서 data를 사용하는 경우에 사용한다.
      */
-    private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode, String message, Object data) {
+    private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message, Object data) {
         return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(makeErrorResponse(errorCode, message, data));
     }
