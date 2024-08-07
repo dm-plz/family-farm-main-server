@@ -6,8 +6,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class CommonException extends RuntimeException{
+public class CommonException extends RuntimeException {
 
-    private final ErrorCode errorCode;
-    private final Object data;
+	private final ErrorCode errorCode;
+	private final Object data;
 }
