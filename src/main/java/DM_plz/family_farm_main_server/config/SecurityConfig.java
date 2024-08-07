@@ -16,8 +16,13 @@ public class SecurityConfig {
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(authorize -> authorize
-				.requestMatchers("/", "/h2-console/**").permitAll()
-				.anyRequest().authenticated()
+				.requestMatchers(
+					"/",
+					"/h2-console/**"
+				)
+				.permitAll()
+				.anyRequest()
+				.authenticated()
 			)
 			.headers(headersConfigurer -> headersConfigurer
 				.frameOptions(
