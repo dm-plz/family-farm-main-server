@@ -2,6 +2,7 @@
 /.gradle/
 /gradle/
 /.idea/
+/generated/
 # 빌드와 관련된 파일
 /build/
 /bin/
