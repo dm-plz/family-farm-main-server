@@ -1,6 +1,6 @@
 package DM_plz.family_farm_main_server.member.domain;
 
-public enum OAuthProvider {
+public enum AuthProvider {
 
 	NATIVE,
 	GOOGLE,
