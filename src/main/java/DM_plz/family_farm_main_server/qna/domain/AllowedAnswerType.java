@@ -6,7 +6,7 @@ import java.util.List;
 public enum AllowedAnswerType {
 
 	TYPE1(Arrays.asList(AnswerType.TEXT, AnswerType.VOICE)),
-	TYPE2(Arrays.asList(AnswerType.TEXT));
+	TYPE2(Arrays.asList(AnswerType.IMAGE));
 
 	private final List<AnswerType> answerTypes;
 

@@ -47,6 +47,9 @@ public class Answer {
 	@Column(name = "comments")
 	private List<Comment> comments;
 
+	@Column(name = "emoji_text")
+	private String emojiText;
+
 	@Column(name = "answer_content")
 	private String answerContent;
 
