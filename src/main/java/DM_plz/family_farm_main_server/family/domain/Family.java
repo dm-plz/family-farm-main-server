@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import DM_plz.family_farm_main_server.member.domain.MemberInfo;
+import DM_plz.family_farm_main_server.member.domain.MemberDetail;
 import DM_plz.family_farm_main_server.qna.domain.QuestionHistory;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -38,7 +38,7 @@ public class Family {
 	private Long id;
 
 	@OneToMany(mappedBy = "family")
-	private List<MemberInfo> memberLists;
+	private List<MemberDetail> memberLists;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "invite_code_id")
