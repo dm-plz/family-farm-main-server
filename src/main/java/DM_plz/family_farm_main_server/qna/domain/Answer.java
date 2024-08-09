@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import DM_plz.family_farm_main_server.member.domain.MemberInfo;
+import DM_plz.family_farm_main_server.member.domain.MemberDetail;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,8 +36,8 @@ public class Answer {
 	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_info_id")
-	private MemberInfo memberInfo;
+	@JoinColumn(name = "member_detail_id")
+	private MemberDetail memberDetail;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "question_history_id")

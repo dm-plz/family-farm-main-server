@@ -26,16 +26,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "member_info")
+@Table(name = "member_detail")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class MemberInfo {
+public class MemberDetail {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "member_info_id ")
+	@Column(name = "member_detail_id ")
 	private Long id;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -46,15 +46,15 @@ public class MemberInfo {
 	@JoinColumn(name = "family_id")
 	private Family family;
 
-	@OneToMany(mappedBy = "memberInfo")
+	@OneToMany(mappedBy = "memberDetail")
 	@Column(name = "answers")
 	private List<Answer> answers;
 
-	@OneToMany(mappedBy = "memberInfo")
+	@OneToMany(mappedBy = "memberDetail")
 	@Column(name = "survey_answers")
 	private List<SurveyAnswer> surveyAnswers;
 
-	@OneToMany(mappedBy = "memberInfo")
+	@OneToMany(mappedBy = "memberDetail")
 	@Column(name = "comments")
 	private List<Comment> comments;
 
@@ -66,6 +66,9 @@ public class MemberInfo {
 
 	@Column(name = "birth_type")
 	private BirthType birthType;
+
+	@Column(name = "group_role")
+	private GroupRole groupRole;
 
 	@Column(name = "completed_survey_number")
 	private SurveyNumber completedSurveyNumber;

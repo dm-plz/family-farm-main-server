@@ -31,7 +31,7 @@ public class Account {
 	private Long id;
 
 	@OneToOne(mappedBy = "account")
-	private MemberInfo memberInfo;
+	private MemberDetail memberDetail;
 
 	@Column(name = "email")
 	private String email;
