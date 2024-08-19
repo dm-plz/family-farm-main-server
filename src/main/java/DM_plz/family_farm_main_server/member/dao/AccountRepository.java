@@ -4,9 +4,9 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import DM_plz.family_farm_main_server.member.domain.Account;
+import DM_plz.family_farm_main_server.member.domain.Member;
 
-public interface AccountRepository extends JpaRepository<Account, Long> {
+public interface AccountRepository extends JpaRepository<Member, Long> {
 
-	Optional<Account> findByEmail(String email);
+	Optional<Member> findByEmail(String email);
 }
