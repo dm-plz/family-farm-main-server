@@ -40,7 +40,7 @@ public class Member implements UserDetails {
 	private String email;
 
 	@Column(name = "password")
-	private String password = "0000";
+	private String password;
 
 	@Column(name = "auth_provider")
 	private AuthProvider authProvider;
@@ -76,6 +76,6 @@ public class Member implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return null;
+		return this.email;
 	}
 }
