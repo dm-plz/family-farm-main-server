@@ -7,16 +7,12 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import DM_plz.family_farm_main_server.member.domain.MemberDetail;
 import DM_plz.family_farm_main_server.qna.domain.QuestionHistory;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,9 +36,8 @@ public class Family {
 	@OneToMany(mappedBy = "family")
 	private List<MemberDetail> memberLists;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "invite_code_id")
-	private InviteCode inviteCode;
+	@Column(name = "invite_code")
+	private String inviteCode;
 
 	@OneToMany(mappedBy = "family")
 	private List<QuestionHistory> questionHistories;
