@@ -1,8 +1,11 @@
 package DM_plz.family_farm_main_server.member.domain;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,26 +21,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "account")
+@Table(name = "member")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Account {
+public class Member implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "account_id")
+	@Column(name = "member_id")
 	private Long id;
 
-	@OneToOne(mappedBy = "account")
+	@OneToOne(mappedBy = "member")
 	private MemberDetail memberDetail;
 
 	@Column(name = "email")
 	private String email;
 
 	@Column(name = "password")
-	private String password;
+	private String password = "0000";
 
 	@Column(name = "auth_provider")
 	private AuthProvider authProvider;
@@ -46,4 +49,33 @@ public class Account {
 	@Column(name = "create_at")
 	private LocalDateTime createAt;
 
+	@Override
+	public boolean isAccountNonExpired() {
+		return UserDetails.super.isAccountNonExpired();
+	}
+
+	@Override
+	public boolean isAccountNonLocked() {
+		return UserDetails.super.isAccountNonLocked();
+	}
+
+	@Override
+	public boolean isCredentialsNonExpired() {
+		return UserDetails.super.isCredentialsNonExpired();
+	}
+
+	@Override
+	public boolean isEnabled() {
+		return UserDetails.super.isEnabled();
+	}
+
+	@Override
+	public Collection<? extends GrantedAuthority> getAuthorities() {
+		return null;
+	}
+
+	@Override
+	public String getUsername() {
+		return null;
+	}
 }
