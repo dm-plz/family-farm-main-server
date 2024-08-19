@@ -7,8 +7,8 @@ import DM_plz.family_farm_main_server.common.exception.errorCode.CommonErrorCode
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import DM_plz.family_farm_main_server.family.dao.FamilyRepository;
 import DM_plz.family_farm_main_server.family.domain.Family;
-import DM_plz.family_farm_main_server.member.dao.AccountRepository;
 import DM_plz.family_farm_main_server.member.dao.MemberDetailRepository;
+import DM_plz.family_farm_main_server.member.dao.MemberRepository;
 import DM_plz.family_farm_main_server.member.domain.Member;
 import DM_plz.family_farm_main_server.member.domain.MemberDetail;
 import DM_plz.family_farm_main_server.member.dto.SignUpDTO;
@@ -20,7 +20,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class MemberService {
 
-	private final AccountRepository accountRepository;
+	private final MemberRepository memberRepository;
 	private final MemberDetailRepository memberDetailRepository;
 	private final FamilyRepository familyRepository;
 	private final SignUpMapper signUpMapper;
@@ -40,7 +40,7 @@ public class MemberService {
 			newMemberDetail.relationFamily(family);
 		}
 
-		accountRepository.save(newMember);
+		memberRepository.save(newMember);
 		memberDetailRepository.save(newMemberDetail);
 
 		return newMember;
