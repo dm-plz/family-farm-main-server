@@ -1,8 +1,9 @@
 package DM_plz.family_farm_main_server.auth.domain;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import DM_plz.family_farm_main_server.member.domain.Account;
+import DM_plz.family_farm_main_server.member.domain.UserRole;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,69 +12,63 @@ import lombok.ToString;
 @ToString
 @Builder(access = AccessLevel.PRIVATE)
 @Getter
-public class OAuthAttributes {
+public class OAuth2UserInfo {
 	private Map<String, Object> attributes;
 	private String attributeKey;
 	private String email;
 	private String name;
 	private String picture;
 	private String provider;
-	
-	public static OAuthAttributes of(String provider, String attributeKey,
+
+	public static OAuth2UserInfo of(String provider,
 		Map<String, Object> attributes) {
 		switch (provider) {
 			case "google":
-				return ofGoogle(provider, attributeKey, attributes);
+				return ofGoogle(provider, attributes);
 			case "kakao":
-				return ofKakao(provider, "email", attributes);
+				return ofKakao(provider, attributes);
 			case "naver":
-				return ofNaver(provider, "id", attributes);
+				return ofNaver(provider, attributes);
 			default:
 				throw new RuntimeException();
 		}
 	}
 
-	private static OAuthAttributes ofGoogle(String provider, String attributeKey,
+	private static OAuth2UserInfo ofGoogle(String provider,
 		Map<String, Object> attributes) {
-		return OAuthAttributes.builder()
+		return OAuth2UserInfo.builder()
 			.email((String)attributes.get("email"))
 			.provider(provider)
 			.attributes(attributes)
-			.attributeKey(attributeKey)
 			.build();
 	}
 
-	private static OAuthAttributes ofKakao(String provider, String attributeKey,
+	private static OAuth2UserInfo ofKakao(String provider,
 		Map<String, Object> attributes) {
 		Map<String, Object> kakaoAccount = (Map<String, Object>)attributes.get("kakao_account");
 
-		return OAuthAttributes.builder()
+		return OAuth2UserInfo.builder()
 			.email((String)kakaoAccount.get("email"))
 			.provider(provider)
 			.attributes(kakaoAccount)
-			.attributeKey(attributeKey)
 			.build();
 	}
 
-	private static OAuthAttributes ofNaver(String provider, String attributeKey,
+	private static OAuth2UserInfo ofNaver(String provider,
 		Map<String, Object> attributes) {
 		Map<String, Object> response = (Map<String, Object>)attributes.get("response");
 
-		return OAuthAttributes.builder()
+		return OAuth2UserInfo.builder()
 			.email((String)response.get("email"))
 			.attributes(response)
 			.provider(provider)
-			.attributeKey(attributeKey)
 			.build();
 	}
 
-	public Map<String, Object> convertToMap() {
-		Map<String, Object> map = new HashMap<>();
-		map.put("id", attributeKey);
-		map.put("key", attributeKey);
-		map.put("email", email);
-		map.put("provider", provider);
-
-		return map;
+	public Account toEntity() {
+		return Account.builder()
+			.email(email)
+			.userRole(UserRole.USER_ROLE)
+			.build();
 	}
 }
