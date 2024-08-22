@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import DM_plz.family_farm_main_server.family.application.FamilyService;
 import DM_plz.family_farm_main_server.family.dao.FamilyRepository;
 import DM_plz.family_farm_main_server.family.domain.Family;
 
@@ -13,7 +14,7 @@ import DM_plz.family_farm_main_server.family.domain.Family;
 class AuthServiceTest {
 
 	@Autowired
-	AuthService authService;
+	FamilyService familyService;
 
 	@Autowired
 	FamilyRepository familyRepository;
@@ -30,8 +31,8 @@ class AuthServiceTest {
 		familyRepository.save(newFamily);
 
 		// When
-		Boolean isValidA = authService.isValidFamilyCode("aaaaaaaa");
-		Boolean isValidB = authService.isValidFamilyCode("ddsdddsd");
+		Boolean isValidA = familyService.isValidFamilyCode("aaaaaaaa");
+		Boolean isValidB = familyService.isValidFamilyCode("ddsdddsd");
 
 		// Then
 		Assertions.assertEquals(true, isValidA);

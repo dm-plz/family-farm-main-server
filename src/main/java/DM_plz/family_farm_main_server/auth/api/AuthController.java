@@ -6,8 +6,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import DM_plz.family_farm_main_server.auth.application.AuthService;
 import DM_plz.family_farm_main_server.auth.dto.ValidateFamilyCode;
+import DM_plz.family_farm_main_server.family.application.FamilyService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -15,12 +15,12 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController {
 
-	private final AuthService authService;
+	private final FamilyService familyService;
 
 	@GetMapping("/validate/family-code")
 	public ResponseEntity<ValidateFamilyCode> validateFamilyCode(@RequestParam String familyCode) {
 
-		Boolean isValid = authService.isValidFamilyCode(familyCode);
+		Boolean isValid = familyService.isValidFamilyCode(familyCode);
 
 		ValidateFamilyCode validateFamilyCode = ValidateFamilyCode.builder()
 			.isValidate(isValid)
