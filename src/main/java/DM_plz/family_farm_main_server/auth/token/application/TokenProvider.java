@@ -1,6 +1,4 @@
-package DM_plz.family_farm_main_server.auth.jwt;
-
-import static DM_plz.family_farm_main_server.common.exception.errorCode.TokenErrorCode.*;
+package DM_plz.family_farm_main_server.auth.token.application;
 
 import java.util.Collections;
 import java.util.Date;
@@ -19,9 +17,9 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
-import DM_plz.family_farm_main_server.auth.TokenService;
-import DM_plz.family_farm_main_server.auth.redis.entity.Token;
-import DM_plz.family_farm_main_server.common.exception.exception.TokenException;
+import DM_plz.family_farm_main_server.auth.token.domain.Token;
+import DM_plz.family_farm_main_server.common.exception.errorCode.AuthError;
+import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -37,9 +35,11 @@ public class TokenProvider {
 	@Value("${jwt.key}")
 	private String key;
 	private SecretKey secretKey;
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30L;
-	private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60L * 24 * 7;
+	private final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30L;
+	private final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60L * 24 * 7;
+	private final String GRANT_TYPE = "Bearer";
 	private static final String KEY_ROLE = "role";
+
 	private final TokenService tokenService;
 
 	@PostConstruct
@@ -51,9 +51,10 @@ public class TokenProvider {
 		return generateToken(authentication, ACCESS_TOKEN_EXPIRE_TIME);
 	}
 
-	public void generateRefreshToken(Authentication authentication, String accessToken) {
+	public String generateRefreshToken(Authentication authentication, String accessToken) {
 		String refreshToken = generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME);
 		tokenService.saveOrUpdate(authentication.getName(), refreshToken, accessToken);
+		return refreshToken;
 	}
 
 	private String generateToken(Authentication authentication, long expireTime) {
@@ -71,6 +72,18 @@ public class TokenProvider {
 			.expiration(expiredDate)
 			.signWith(secretKey, Jwts.SIG.HS512)
 			.compact();
+	}
+
+	public long getAccessTokenExpireTime() {
+		return ACCESS_TOKEN_EXPIRE_TIME;
+	}
+
+	public long getRefreshTokenExpireTime() {
+		return REFRESH_TOKEN_EXPIRE_TIME;
+	}
+
+	public String getGrantType() {
+		return GRANT_TYPE;
 	}
 
 	public Authentication getAuthentication(String token) {
@@ -109,15 +122,16 @@ public class TokenProvider {
 	}
 
 	private Claims parseClaim(String token) {
+		// ToDo 예외 상황 세분화해서 처리하기
 		try {
 			return Jwts.parser().verifyWith(secretKey).build()
 				.parseSignedClaims(token).getPayload();
 		} catch (ExpiredJwtException e) {
 			return e.getClaims();
 		} catch (MalformedJwtException e) {
-			throw new TokenException(INVALID_TOKEN);
+			throw new CommonException(AuthError.INVALID_JWT_SIGNATURE, null);
 		} catch (SecurityException e) {
-			throw new TokenException(INVALID_JWT_SIGNATURE);
+			throw new CommonException(AuthError.INVALID_JWT_SIGNATURE, null);
 		}
 	}
 }

@@ -1,9 +1,13 @@
 package DM_plz.family_farm_main_server.common.exception.handler;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
 import DM_plz.family_farm_main_server.common.exception.errorCode.ErrorCode;
@@ -19,6 +23,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 		ErrorCode errorCode = e.getErrorCode();
 		log.debug(errorCode.toString());
 		return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
+	}
+
+	@ExceptionHandler(HttpClientErrorException.class)
+	public ResponseEntity<String> restTemplateError(HttpClientErrorException e) throws JsonProcessingException {
+		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	/**

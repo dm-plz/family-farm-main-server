@@ -1,4 +1,4 @@
-package DM_plz.family_farm_main_server.auth.redis.entity;
+package DM_plz.family_farm_main_server.auth.token.domain;
 
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
@@ -28,5 +28,5 @@ public class Token {
 	public void updateAccessToken(String accessToken) {
 		this.accessToken = accessToken;
 	}
-	
+
 }

@@ -1,10 +1,10 @@
-package DM_plz.family_farm_main_server.auth;
+package DM_plz.family_farm_main_server.auth.token.application;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import DM_plz.family_farm_main_server.auth.redis.entity.Token;
-import DM_plz.family_farm_main_server.auth.redis.repository.TokenRepository;
+import DM_plz.family_farm_main_server.auth.token.dao.TokenRepository;
+import DM_plz.family_farm_main_server.auth.token.domain.Token;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,7 +22,6 @@ public class TokenService {
 		Token token = tokenRepository.findByAccessToken(accessToken)
 			.map(o -> o.updateRefreshToken(refreshToken))
 			.orElseGet(() -> new Token(memberKey, refreshToken, accessToken));
-
 		tokenRepository.save(token);
 	}
 

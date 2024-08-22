@@ -7,25 +7,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import DM_plz.family_farm_main_server.auth.CustomOAuth2UserService;
-import DM_plz.family_farm_main_server.auth.handler.AuthenticationSuccessHandler;
-import DM_plz.family_farm_main_server.auth.handler.CustomAccessDeniedHandler;
-import DM_plz.family_farm_main_server.auth.handler.CustomAuthenticationEntryPoint;
-import DM_plz.family_farm_main_server.auth.handler.OAuth2FailureHandler;
-import DM_plz.family_farm_main_server.auth.jwt.TokenAuthenticationFilter;
-import DM_plz.family_farm_main_server.auth.jwt.TokenExceptionFilter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-
-	private final CustomOAuth2UserService customOAuth2UserService;
-	private final AuthenticationSuccessHandler authenticationSuccessHandler;
-	private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,28 +33,22 @@ public class SecurityConfig {
 					"/favicon.ico",
 					"/resources/**",
 					"/h2-console/**",
-					"/auth/success",
 					"/test/**",
-					"/login"
+					"/login/**",
+					"/auth/**"
 				)
 				.permitAll()
 				.anyRequest()
 				.authenticated()
-			)
+			);
 
-			.oauth2Login(oauth ->
-				oauth.userInfoEndpoint(c -> c.userService(customOAuth2UserService))
-					.successHandler(authenticationSuccessHandler)
-					.failureHandler(new OAuth2FailureHandler())
-			)
-
-			.addFilterBefore(tokenAuthenticationFilter,
-				UsernamePasswordAuthenticationFilter.class)
-			.addFilterBefore(new TokenExceptionFilter(), tokenAuthenticationFilter.getClass())
-
-			.exceptionHandling(exceptions -> exceptions
-				.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-				.accessDeniedHandler(new CustomAccessDeniedHandler()));
+		// .addFilterBefore(tokenAuthenticationFilter,
+		// 	UsernamePasswordAuthenticationFilter.class)
+		// .addFilterBefore(new TokenExceptionFilter(), tokenAuthenticationFilter.getClass())
+		//
+		// .exceptionHandling(exceptions -> exceptions
+		// 	.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
+		// 	.accessDeniedHandler(new CustomAccessDeniedHandler()));
 
 		return http.build();
 	}

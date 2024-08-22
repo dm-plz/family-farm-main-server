@@ -1,4 +1,4 @@
-package DM_plz.family_farm_main_server.auth.jwt;
+package DM_plz.family_farm_main_server.auth.token.filter;
 
 import static org.springframework.http.HttpHeaders.*;
 
@@ -6,12 +6,12 @@ import java.io.IOException;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import DM_plz.family_farm_main_server.common.constants.TokenKey;
+import DM_plz.family_farm_main_server.auth.token.application.TokenProvider;
+import DM_plz.family_farm_main_server.auth.token.constants.TokenKey;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Component
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
