@@ -9,5 +9,5 @@ import DM_plz.family_farm_main_server.member.domain.MemberDetail;
 
 public interface MemberDetailRepository extends JpaRepository<MemberDetail, Long> {
 
-	Optional<MemberDetail> findByAccount(Member member);
+	Optional<MemberDetail> findByMember(Member member);
 }

@@ -11,8 +11,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import DM_plz.family_farm_main_server.common.exception.errorCode.CommonErrorCode;
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
-import DM_plz.family_farm_main_server.member.dao.AccountRepository;
 import DM_plz.family_farm_main_server.member.dao.MemberDetailRepository;
+import DM_plz.family_farm_main_server.member.dao.MemberRepository;
 import DM_plz.family_farm_main_server.member.domain.AuthProvider;
 import DM_plz.family_farm_main_server.member.domain.BirthType;
 import DM_plz.family_farm_main_server.member.domain.GroupRole;
@@ -28,7 +28,7 @@ class MemberServiceTest {
 	MemberService memberService;
 
 	@Autowired
-	AccountRepository accountRepository;
+	MemberRepository memberRepository;
 
 	@Autowired
 	MemberDetailRepository memberDetailRepository;
@@ -53,12 +53,12 @@ class MemberServiceTest {
 
 		// When
 		Member newMember = memberService.signUp(signUpDTO);
-		Member findMember = accountRepository.findByEmail(signUpDTO.getEmail())
+		Member findMember = memberRepository.findByEmail(signUpDTO.getEmail())
 			.orElseThrow(
 				() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null)
 			);
 
-		MemberDetail findMemberDetail = memberDetailRepository.findByAccount(findMember)
+		MemberDetail findMemberDetail = memberDetailRepository.findByMember(findMember)
 			.orElseThrow(
 				() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null)
 			);
@@ -89,7 +89,7 @@ class MemberServiceTest {
 
 		// When
 		Member newMember = memberService.signUp(signUpDTO);
-		Member findMember = accountRepository.findByEmail(signUpDTO.getEmail())
+		Member findMember = memberRepository.findByEmail(signUpDTO.getEmail())
 			.orElseThrow(
 				() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null)
 			);
