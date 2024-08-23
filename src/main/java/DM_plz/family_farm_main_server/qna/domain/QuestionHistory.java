@@ -33,6 +33,10 @@ public class QuestionHistory {
 	@Column(name = "question_history_id")
 	private Long id;
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "question_id")
+	private Question question;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "family_id")
 	private Family family;

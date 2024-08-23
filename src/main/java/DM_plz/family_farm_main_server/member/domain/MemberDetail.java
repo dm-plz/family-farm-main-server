@@ -39,8 +39,8 @@ public class MemberDetail {
 	private Long id;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "account_id")
-	private Account account;
+	@JoinColumn(name = "member_id")
+	private Member member;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "family_id")
@@ -73,4 +73,11 @@ public class MemberDetail {
 	@Column(name = "completed_survey_number")
 	private SurveyNumber completedSurveyNumber;
 
+	public void relationAccount(Member member) {
+		this.member = member;
+	}
+
+	public void relationFamily(Family family) {
+		this.family = family;
+	}
 }
