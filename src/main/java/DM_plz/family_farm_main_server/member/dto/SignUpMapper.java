@@ -10,7 +10,7 @@ import DM_plz.family_farm_main_server.member.domain.MemberDetail;
 public interface SignUpMapper {
 
 	@Mapping(source = "OAuthProvider", target = "authProvider")
-	Member toAccount(SignUpDTO signUpDTO);
+	Member toMember(SignUpDTO signUpDTO);
 
 	MemberDetail toMemberDetail(SignUpDTO signUpDTO);
 

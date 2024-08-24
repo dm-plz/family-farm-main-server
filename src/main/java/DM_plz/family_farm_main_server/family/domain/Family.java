@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 
 import DM_plz.family_farm_main_server.member.domain.MemberDetail;
 import DM_plz.family_farm_main_server.qna.domain.QuestionHistory;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -39,7 +40,7 @@ public class Family {
 	@Column(name = "invite_code")
 	private String inviteCode;
 
-	@OneToMany(mappedBy = "family")
+	@OneToMany(mappedBy = "family", cascade = CascadeType.ALL)
 	private List<QuestionHistory> questionHistories;
 
 	@CreationTimestamp
