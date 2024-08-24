@@ -46,4 +46,14 @@ public class Family {
 	@Column(name = "create_at")
 	private LocalDateTime createAt;
 
+	public void issueFamilyCode(String inviteCode) {
+
+		this.inviteCode = inviteCode;
+	}
+
+	public void reissueFamilyCode(String inviteCode) {
+
+		this.inviteCode = inviteCode;
+	}
+
 }
