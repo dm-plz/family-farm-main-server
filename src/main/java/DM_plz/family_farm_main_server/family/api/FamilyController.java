@@ -1,8 +1,8 @@
 package DM_plz.family_farm_main_server.family.api;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +18,7 @@ public class FamilyController {
 
 	private final FamilyService familyService;
 
-	@GetMapping("/code")
+	@PostMapping("/code")
 	public ResponseEntity<FamilyCode> issueFamilyCode(@RequestParam Long familyId) {
 		FamilyCode familyCode = familyService.issueFamilyCode(familyId);
 
