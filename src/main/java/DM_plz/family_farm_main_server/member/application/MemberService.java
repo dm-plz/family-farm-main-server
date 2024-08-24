@@ -28,7 +28,7 @@ public class MemberService {
 	@Transactional
 	public Member signUp(SignUpDTO signUpDTO) {
 
-		Member newMember = signUpMapper.toAccount(signUpDTO);
+		Member newMember = signUpMapper.toMember(signUpDTO);
 		MemberDetail newMemberDetail = signUpMapper.toMemberDetail(signUpDTO);
 
 		newMemberDetail.relationAccount(newMember);
