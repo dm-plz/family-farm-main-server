@@ -23,7 +23,7 @@ public class SurveyController {
 	private final SurveyService surveyService;
 
 	@Value("${baseUrl}")
-	private final String baseUrl;
+	private String baseUrl;
 
 	@GetMapping("/")
 	public ResponseEntity<SurveyQuestionList> getSurvey(SurveyNumber surveyNumber) {

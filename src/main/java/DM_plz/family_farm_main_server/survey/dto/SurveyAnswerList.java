@@ -12,6 +12,7 @@ public class SurveyAnswerList {
 	private List<SurveyItem> survey;
 
 	@Data
+	@Builder
 	public static class SurveyItem {
 
 		private Long id;
