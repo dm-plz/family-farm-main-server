@@ -1,63 +1,61 @@
 package DM_plz.family_farm_main_server.common.exception.handler;
 
-import org.springframework.http.HttpStatus;
+import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
+import DM_plz.family_farm_main_server.common.exception.errorCode.ErrorCode;
+import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
 import DM_plz.family_farm_main_server.common.exception.errorCode.ErrorCode;
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
-import lombok.extern.slf4j.Slf4j;
+import DM_plz.family_farm_main_server.common.exception.exception.FamilyException;
 
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-	@ExceptionHandler(CommonException.class)
-	public ResponseEntity<ErrorResponse> commonError(CommonException e) {
-		ErrorCode errorCode = e.getErrorCode();
-		log.debug(errorCode.toString());
-		return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
-	}
+    @ExceptionHandler(CommonException.class)
+    public ResponseEntity<ErrorResponse> commonError(CommonException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
+    }
 
-	@ExceptionHandler(HttpClientErrorException.class)
-	public ResponseEntity<String> restTemplateError(HttpClientErrorException e) throws JsonProcessingException {
-		return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-	}
+    @ExceptionHandler(FamilyException.class)
+    public ResponseEntity<ErrorResponse> commonError(FamilyException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode, errorCode.getMessage());
+    }
 
-	/**
-	 * Exception에서 data를 사용하지 않는 경우에 사용한다.
-	 */
-	private ResponseEntity<Object> handleExceptionInternal(ErrorCode errorCode, String message) {
-		return ResponseEntity.status(errorCode.getHttpStatus())
-			.body(makeErrorResponse(errorCode, message));
-	}
+    /**
+     * Exception에서 data를 사용하지 않는 경우에 사용한다.
+     */
+    private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+            .body(makeErrorResponse(errorCode, message));
+    }
 
-	private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message) {
-		return ErrorResponse.builder()
-			.code(errorCode.getCode())
-			.message(message)
-			.build();
-	}
+    private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message) {
+        return ErrorResponse.builder()
+            .code(errorCode.getCode())
+            .message(message)
+            .build();
+    }
 
-	/**
-	 * Exception에서 data를 사용하는 경우에 사용한다.
-	 */
-	private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message, Object data) {
-		return ResponseEntity.status(errorCode.getHttpStatus())
-			.body(makeErrorResponse(errorCode, message, data));
-	}
+    /**
+     * Exception에서 data를 사용하는 경우에 사용한다.
+     */
+    private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message, Object data) {
+        return ResponseEntity.status(errorCode.getHttpStatus())
+            .body(makeErrorResponse(errorCode, message, data));
+    }
 
-	private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message, Object data) {
-		return ErrorResponse.builder()
-			.code(errorCode.getCode())
-			.message(message)
-			.data(data)
-			.build();
-	}
+    private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message, Object data) {
+        return ErrorResponse.builder()
+            .code(errorCode.getCode())
+            .message(message)
+            .data(data)
+            .build();
+    }
 }
