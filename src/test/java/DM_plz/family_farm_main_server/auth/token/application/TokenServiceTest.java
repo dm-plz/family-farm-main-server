@@ -109,7 +109,7 @@ class TokenServiceTest {
 	}
 
 	@Test
-	@DisplayName("access token update 기능 테스트")
+	@DisplayName("sub로 token 찾기")
 	void findBySubOrThrow() {
 		String subMockUp = "SUB_MOCKUP3";
 		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
