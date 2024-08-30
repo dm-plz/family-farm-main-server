@@ -7,13 +7,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import DM_plz.family_farm_main_server.auth.token.application.TokenProvider;
+import DM_plz.family_farm_main_server.auth.token.filter.TokenAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+
+	private final TokenProvider tokenProvider;
 
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -33,14 +38,14 @@ public class SecurityConfig {
 					"/favicon.ico",
 					"/resources/**",
 					"/h2-console/**",
-					"/test/**",
-					"/login/**",
 					"/auth/**"
 				)
 				.permitAll()
 				.anyRequest()
 				.authenticated()
-			);
+			)
+
+			.addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
 
 		// .addFilterBefore(tokenAuthenticationFilter,
 		// 	UsernamePasswordAuthenticationFilter.class)

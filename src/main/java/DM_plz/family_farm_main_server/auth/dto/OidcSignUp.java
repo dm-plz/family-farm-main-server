@@ -1,36 +1,39 @@
-package DM_plz.family_farm_main_server.member.dto;
+package DM_plz.family_farm_main_server.auth.dto;
 
 import java.time.LocalDateTime;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
-import DM_plz.family_farm_main_server.auth.dto.AlertToken;
 import DM_plz.family_farm_main_server.member.domain.BirthType;
 import DM_plz.family_farm_main_server.member.domain.GroupRole;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Past;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@Builder
+@Getter
+@Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class SignUpDTO {
+public class OidcSignUp {
 
+	@NotBlank
 	private String nickname;
 
-	@DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+	@NotBlank
+	@Past
 	private LocalDateTime birth;
 
+	@NotBlank
 	private BirthType birthType;
 
+	@NotBlank
 	private String sub;
 
+	@NotBlank
 	private GroupRole groupRole;
 
 	private String familyCode;
 
+	@NotBlank
 	private AlertToken alertToken;
 
 }

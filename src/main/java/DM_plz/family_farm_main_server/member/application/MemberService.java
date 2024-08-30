@@ -1,5 +1,7 @@
 package DM_plz.family_farm_main_server.member.application;
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,5 +46,9 @@ public class MemberService {
 		memberDetailRepository.save(newMemberDetail);
 
 		return newMember;
+	}
+
+	public Optional<Member> findMember(String sub) {
+		return memberRepository.findBySub(sub);
 	}
 }
