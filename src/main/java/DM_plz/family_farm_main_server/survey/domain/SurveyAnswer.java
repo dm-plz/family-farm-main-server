@@ -48,4 +48,11 @@ public class SurveyAnswer {
 	@Column(name = "create_at")
 	private LocalDateTime createAt;
 
+	public void relationWithSurveyQuestion(SurveyQuestion surveyQuestion) {
+		this.surveyQuestion = surveyQuestion;
+	}
+
+	public void relationWithMemberDetail(MemberDetail memberDetail) {
+		this.memberDetail = memberDetail;
+	}
 }
