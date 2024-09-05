@@ -1,7 +1,5 @@
 package DM_plz.family_farm_main_server.member.application;
 
-import java.util.Optional;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,7 +46,7 @@ public class MemberService {
 		return newMember;
 	}
 
-	public Optional<Member> findMember(String sub) {
-		return memberRepository.findBySub(sub);
+	public Member findMember(String sub) {
+		return memberRepository.findBySub(sub).orElseThrow(() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null));
 	}
 }
