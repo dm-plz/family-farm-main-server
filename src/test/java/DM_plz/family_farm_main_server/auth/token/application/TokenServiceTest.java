@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 import DM_plz.family_farm_main_server.auth.api.AuthController;
 import DM_plz.family_farm_main_server.auth.application.IdTokenService;
@@ -39,102 +38,54 @@ class TokenServiceTest {
 	@MockBean
 	JwkService jwkService;
 
-	private String userId = "1";
-	private String familyId = "2";
-	private int accessTokenExpireTime = 1000 * 3;
-
-	private int refreshTokenExpireTime = 1000 * 6;
-	private int accessTokenExpireSecond = 3;
-	private int refreshTokenExpireSecond = 6;
+	private final Long userId = 1L;
+	private final Long familyId = 2L;
+	private final int accessTokenExpireTime = 1000 * 3;
+	private final int refreshTokenExpireTime = 1000 * 6;
 
 	@Test
-	@Transactional
 	@DisplayName("token 삭제 확인")
 	void deleteToken() {
 		//Given
 		String subMockUp = "SUB_MOCKUP1";
 		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
-		String accessToken = tokenProvider.generateAccessToken(authentication);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
+		String accessToken = tokenProvider.generateAccessToken(authentication, accessTokenExpireTime);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, refreshTokenExpireTime);
 
 		//When
 		Claims claims = tokenProvider.parseClaim(refreshToken);
 		String sub = claims.getSubject();
 		tokenService.deleteToken(sub);
-		Throwable thrown = catchThrowable(() -> tokenService.findByAccessTokenOrThrow(accessToken));
+		Throwable thrown = catchThrowable(() -> tokenService.findBySub(sub));
 		//Then
 
 		assertThat(thrown).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test
-	@Transactional
-	@DisplayName("access token save 기능 테스트")
-	void save() {
-		//Given
-		String subMockUp = "SUB_MOCKUP2";
-		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
-		String accessToken = tokenProvider.generateAccessToken(authentication);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
-
-		//When
-		Token token = tokenRepository.findByAccessToken(accessToken).orElseThrow(EntityNotFoundException::new);
-
-		//Then
-		assertThat(token.getAccessToken()).isEqualTo(accessToken);
-	}
-
-	@Test
-	@Transactional
-	@DisplayName("access token update 기능 테스트")
-	void update() {
-		//Given
-		String subMockUp = "SUB_MOCKUP2";
-		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
-		String accessToken = tokenProvider.generateAccessToken(authentication);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
-
-		//When
-		Token token = tokenRepository.findByAccessToken(accessToken).orElseThrow(EntityNotFoundException::new);
-		String oldAccessToken = token.getAccessToken();
-		String updatedAccessToken = tokenProvider.generateAccessToken(authentication);
-		String updatedRefreshToken = tokenProvider.generateRefreshToken(authentication, accessToken,
-			refreshTokenExpireTime);
-		Token updatedToken = tokenRepository.findByAccessToken(updatedAccessToken)
-			.orElseThrow(EntityNotFoundException::new);
-
-		//Then
-		assertThat(oldAccessToken).isEqualTo(accessToken);
-		assertThat(updatedToken.getAccessToken()).isEqualTo(updatedAccessToken);
-	}
-
-	@Test
 	@DisplayName("sub로 token 찾기")
 	void findBySubOrThrow() {
+		//Given
 		String subMockUp = "SUB_MOCKUP3";
-		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
-		String accessToken = tokenProvider.generateAccessToken(authentication);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
 
 		//When
-		Token token = tokenRepository.findByAccessToken(accessToken).orElseThrow(EntityNotFoundException::new);
+		Token token = tokenRepository.findById(subMockUp).orElseThrow(EntityNotFoundException::new);
 
 		//Then
-		assertThat(token.getId()).isEqualTo(subMockUp);
+		assertThat(token.getSub()).isEqualTo(subMockUp);
 	}
 
 	@Test
-	@DisplayName("access token find 기능 테스트")
+	@DisplayName("refresh token find 기능 테스트")
 	void findByAccessTokenOrThrow() {
 		String subMockUp = "SUB_MOCKUP4";
 		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
-		String accessToken = tokenProvider.generateAccessToken(authentication);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, refreshTokenExpireTime);
 
 		//When
-		Token token = tokenRepository.findByAccessToken(accessToken).orElseThrow(EntityNotFoundException::new);
+		Token token = tokenRepository.findByRefreshToken(refreshToken).orElseThrow(EntityNotFoundException::new);
 
 		//Then
-		assertThat(token.getAccessToken()).isEqualTo(accessToken);
+		assertThat(token.getRefreshToken()).isEqualTo(refreshToken);
 	}
 }
