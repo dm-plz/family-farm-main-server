@@ -36,34 +36,21 @@ public class AuthController {
 	private final IdTokenService idTokenService;
 	private final TokenProvider tokenProvider;
 
-	@PostMapping("/oauth/sign-in")
-	public ResponseEntity<JwtSetDTO> signIn(@RequestBody OidcSignIn oidcSignIn) {
-
-		String idToken = oidcSignIn.getIdToken();
-		String oauthProvider = oidcSignIn.getOauthProvider();
-		String customSub = oauthProvider + idTokenService.getSubject(idToken, oauthProvider);
-
-		Member findMember = memberService.findMember(customSub)
-			.orElseThrow(() -> new AuthException(AuthError.UNKNOWN_USER, new SubDTO(customSub)));
-		String userId = String.valueOf(findMember.getId());
-		String familyId = String.valueOf(findMember.getMemberDetail().getFamily().getId());
-
-		CustomAuthentication authentication = new CustomAuthentication(customSub, userId, familyId);
-		JwtSetDTO jwtSetDTO = tokenProvider.generateSuccessToken(authentication);
-		return ResponseEntity.ok(jwtSetDTO);
+	@PostMapping("/oauth/sign-in/oidc")
+	public ResponseEntity<JwtSet> signIn(@RequestBody OidcSignIn oidcSignIn) {
+		String customSub = idTokenService.getCustomSub(oidcSignIn);
+		Member findMember = memberService.findMember(customSub);
+		CustomAuthentication authentication = new CustomAuthentication(customSub, findMember);
+		JwtSet jwtSet = tokenProvider.generateSuccessToken(authentication);
+		return ResponseEntity.ok(jwtSet);
 	}
 
-	@PostMapping("/oauth/sign-up")
-	public ResponseEntity<JwtSetDTO> signUp(@Valid @RequestBody SignUpDTO signUpDTO) {
+	@PostMapping("/oauth/sign-up/oidc")
+	public ResponseEntity<JwtSet> signUpWithOidc(@Valid @RequestBody SignUpDTO signUpDTO) {
 		Member signUpMember = memberService.signUp(signUpDTO);
-		String userId = String.valueOf(signUpMember.getId());
-		String familyId = null;
-		if (signUpDTO.getFamilyCode() != null)
-			familyId = String.valueOf(signUpMember.getMemberDetail().getFamily().getId());
-
-		CustomAuthentication authentication = new CustomAuthentication(signUpMember.getSub(), userId, familyId);
-		JwtSetDTO jwtSetDTO = tokenProvider.generateSuccessToken(authentication);
-		return ResponseEntity.ok(jwtSetDTO);
+		CustomAuthentication authentication = new CustomAuthentication(signUpMember.getSub(), signUpMember);
+		JwtSet jwtSet = tokenProvider.generateSuccessToken(authentication);
+		return ResponseEntity.ok(jwtSet);
 	}
 
 	@PatchMapping("/token/reissuance")
