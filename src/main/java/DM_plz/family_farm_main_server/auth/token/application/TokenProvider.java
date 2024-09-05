@@ -54,7 +54,7 @@ public class TokenProvider {
 
 	public String getAccessToken(String authorization) {
 		if (authorization == null)
-			throw new AuthException(AuthError.AUTHORIZATION_NOT_EXIST, null);
+			throw new AuthException(AuthError.NOT_EXIST_AUTHORIZATION, null);
 		if (!authorization.startsWith(TokenKey.TOKEN_PREFIX))
 			throw new AuthException(AuthError.INVALID_AUTHORIZATION_FORMAT, null);
 		return authorization.substring(TokenKey.TOKEN_PREFIX.length());
