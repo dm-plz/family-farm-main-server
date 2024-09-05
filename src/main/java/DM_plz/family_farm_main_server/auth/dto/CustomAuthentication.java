@@ -1,17 +1,16 @@
 package DM_plz.family_farm_main_server.auth.dto;
 
-import java.util.Collection;
-
 import org.springframework.security.authentication.AbstractAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
+
+import DM_plz.family_farm_main_server.member.domain.Member;
 
 public class CustomAuthentication extends AbstractAuthenticationToken {
 
 	private final String subject;
-	private final String userId;
-	private final String familyId;
+	private final Long userId;
+	private final Long familyId;
 
-	public CustomAuthentication(String subject, String userId, String familyId) {
+	public CustomAuthentication(String subject, Long userId, Long familyId) {
 		super(null);
 		this.subject = subject;
 		this.userId = userId;
@@ -19,12 +18,11 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
 		setAuthenticated(true);
 	}
 
-	public CustomAuthentication(String email, Collection<? extends GrantedAuthority> authorities, String userId,
-		String familyId) {
-		super(authorities);
-		this.subject = email;
-		this.userId = userId;
-		this.familyId = familyId;
+	public CustomAuthentication(String subject, Member member) {
+		super(null);
+		this.subject = subject;
+		this.userId = member.getId();
+		this.familyId = member.getMemberDetail().getFamily().getId();
 		setAuthenticated(true);
 	}
 
@@ -42,11 +40,11 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
 		return this.subject;
 	}
 
-	public String getUserId() {
+	public Long getUserId() {
 		return userId;
 	}
 
-	public String getFamilyId() {
+	public Long getFamilyId() {
 		return familyId;
 	}
 }
