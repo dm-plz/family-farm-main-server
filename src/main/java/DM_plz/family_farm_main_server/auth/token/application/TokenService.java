@@ -26,7 +26,8 @@ public class TokenService {
 		tokenRepository.save(token);
 	}
 
-	public Token findBySubOrThrow(String sub) {
+	@Transactional
+	public Token findBySub(String sub) {
 		return tokenRepository.findById(sub)
 			.orElseThrow(EntityNotFoundException::new);
 	}
