@@ -75,15 +75,17 @@ public class TokenProvider {
 		return generateToken(authentication, expireTime);
 	}
 
-	public String generateRefreshToken(CustomAuthentication authentication, String accessToken) {
+	public String generateRefreshToken(CustomAuthentication authentication) {
 		String refreshToken = generateToken(authentication, REFRESH_TOKEN_EXPIRE_TIME);
-		tokenService.saveOrUpdate(authentication.getSubject(), refreshToken, accessToken);
+		tokenService.saveOrUpdate(authentication.getSubject(), authentication.getUserId(),
+			refreshToken);
 		return refreshToken;
 	}
 
-	public String generateRefreshToken(CustomAuthentication authentication, String accessToken, int expireTime) {
+	public String generateRefreshToken(CustomAuthentication authentication, int expireTime) {
 		String refreshToken = generateToken(authentication, expireTime);
-		tokenService.saveOrUpdate(authentication.getSubject(), refreshToken, accessToken);
+		tokenService.saveOrUpdate(authentication.getSubject(), Long.parseLong(authentication.getUserId()),
+			refreshToken);
 		return refreshToken;
 	}
 
@@ -133,8 +135,8 @@ public class TokenProvider {
 			throw new AuthException(AuthError.INVALID_REFRESH_TOKEN, null);
 
 		String reissueAccessToken = generateAccessToken(getAuthentication(refreshToken));
-		tokenService.updateToken(reissueAccessToken, token);
-		return reissueAccessToken;
+		String reissueRefreshToken = generateRefreshToken(getAuthentication(refreshToken));
+		tokenService.updateToken(reissueRefreshToken);
 	}
 
 	public boolean isExpired(String token) {
