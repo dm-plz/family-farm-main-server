@@ -126,46 +126,34 @@ public class TokenProvider {
 		return new CustomAuthentication(sub, userId, familyId);
 	}
 
-	public String reissueAccessToken(String accessToken, String refreshToken) {
-		if (!isExpired(accessToken))
-			throw new AuthException(AuthError.ACCESS_TOKEN_NOT_EXPIRED, null);
-
-		Token token = tokenService.findByAccessTokenOrThrow(accessToken);
-		if (!token.getRefreshToken().equals(refreshToken))
-			throw new AuthException(AuthError.INVALID_REFRESH_TOKEN, null);
+	public JwtSet reissueToken(String accessToken, String refreshToken) {
+		validateTokenSignature(accessToken);
+		validateToken(refreshToken);
 
 		String reissueAccessToken = generateAccessToken(getAuthentication(refreshToken));
 		String reissueRefreshToken = generateRefreshToken(getAuthentication(refreshToken));
 		tokenService.updateToken(reissueRefreshToken);
+		return new JwtSet(reissueAccessToken, reissueRefreshToken, "Bearer");
 	}
 
-	public boolean isExpired(String token) {
+	public boolean validateToken(String token) {
 		try {
-			Jwts.parser()
-				.verifyWith(secretKey)
-				.build()
-				.parseSignedClaims(token)
-				.getPayload();
-			return false;
+			verifier.verify(token);
+		} catch (SignatureVerificationException e) {
+			throw new RuntimeException(e);
 		} catch (ExpiredJwtException e) {
-			return true;
+			throw new RuntimeException(e);
 		}
-	}
-
-	public boolean validateAccessToken(String accessToken) {
-		Claims claims = parseClaim(accessToken);
-		if (!claims.getExpiration().after(new Date()))
-			throw new CommonException(AuthError.TOKEN_EXPIRED, accessToken);
-		tokenService.findByAccessTokenOrThrow(accessToken);
 		return true;
 	}
 
-	public boolean validateRefreshToken(String refreshToken) {
-		Claims claims = parseClaim(refreshToken);
-		if (!claims.getExpiration().after(new Date()))
-			throw new CommonException(AuthError.TOKEN_EXPIRED, refreshToken);
-		Token findToken = tokenService.findBySubOrThrow(claims.getSubject());
-		return findToken.getRefreshToken().equals(refreshToken);
+	public boolean validateTokenSignature(String token) {
+		try {
+			verifier.verify(token);
+		} catch (SignatureVerificationException e) {
+			throw new RuntimeException(e);
+		}
+		return true;
 	}
 
 	public Claims parseClaim(String token) {
