@@ -10,13 +10,16 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.SignatureVerificationException;
+
 import DM_plz.family_farm_main_server.auth.dto.CustomAuthentication;
-import DM_plz.family_farm_main_server.auth.dto.JwtSetDTO;
+import DM_plz.family_farm_main_server.auth.dto.JwtSet;
 import DM_plz.family_farm_main_server.auth.token.constants.TokenKey;
-import DM_plz.family_farm_main_server.auth.token.domain.Token;
 import DM_plz.family_farm_main_server.common.exception.errorCode.AuthError;
 import DM_plz.family_farm_main_server.common.exception.exception.AuthException;
-import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
@@ -29,6 +32,7 @@ public class TokenProvider {
 
 	@Value("${jwt.key}")
 	private String key;
+	private JWTVerifier verifier;
 	private SecretKey secretKey;
 	// access token 만료 시간 : 30분
 	private final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30L;
@@ -41,6 +45,11 @@ public class TokenProvider {
 	@PostConstruct
 	private void setSecretKey() {
 		secretKey = Keys.hmacShaKeyFor(key.getBytes());
+	}
+
+	@PostConstruct
+	private void setVerifier() {
+		verifier = JWT.require(Algorithm.HMAC512(secretKey.getEncoded())).build();
 	}
 
 	public String getAccessToken(String authorization) {
