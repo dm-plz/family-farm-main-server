@@ -15,6 +15,9 @@ public class Token {
 	@Id
 	private String sub;
 
+	private Long userId;
+
+	@Indexed
 	private String refreshToken;
 
 	public Token updateRefreshToken(String refreshToken) {
