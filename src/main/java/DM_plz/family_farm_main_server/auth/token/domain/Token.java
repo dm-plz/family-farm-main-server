@@ -17,15 +17,8 @@ public class Token {
 
 	private String refreshToken;
 
-	@Indexed
-	private String accessToken;
-
 	public Token updateRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
 		return this;
-	}
-
-	public void updateAccessToken(String accessToken) {
-		this.accessToken = accessToken;
 	}
 }
