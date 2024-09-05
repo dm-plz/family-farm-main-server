@@ -11,6 +11,4 @@ import DM_plz.family_farm_main_server.auth.token.domain.Token;
 public interface TokenRepository extends CrudRepository<Token, String> {
 
 	Optional<Token> findByRefreshToken(String refreshToken);
-
-	Optional<Token> findByAccessToken(String accessToken);
 }
