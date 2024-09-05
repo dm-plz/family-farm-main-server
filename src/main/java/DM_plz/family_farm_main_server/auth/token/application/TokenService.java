@@ -14,8 +14,8 @@ public class TokenService {
 
 	private final TokenRepository tokenRepository;
 
-	public void deleteToken(String memberKey) {
-		tokenRepository.deleteById(memberKey);
+	public void deleteToken(String sub) {
+		tokenRepository.deleteById(sub);
 	}
 
 	@Transactional
