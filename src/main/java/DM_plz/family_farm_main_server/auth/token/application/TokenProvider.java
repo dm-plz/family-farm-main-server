@@ -33,7 +33,7 @@ public class TokenProvider {
 	// access token 만료 시간 : 30분
 	private final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30L;
 	// refresh token 만료 시간 : 6개월
-	private final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60L * 24 * 7 * 4 * 6;
+	private final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60L * 24 * 30 * 6;
 	private final String GRANT_TYPE = "Bearer";
 
 	private final TokenService tokenService;
