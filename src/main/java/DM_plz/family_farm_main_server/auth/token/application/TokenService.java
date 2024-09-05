@@ -1,6 +1,5 @@
 package DM_plz.family_farm_main_server.auth.token.application;
 
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 public class TokenService {
 
 	private final TokenRepository tokenRepository;
-	private final JwtDecoder jwtDecoder;
 
 	public void deleteToken(String memberKey) {
 		tokenRepository.deleteById(memberKey);
