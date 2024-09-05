@@ -10,12 +10,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.transaction.annotation.Transactional;
 
 import DM_plz.family_farm_main_server.auth.api.AuthController;
 import DM_plz.family_farm_main_server.auth.application.IdTokenService;
 import DM_plz.family_farm_main_server.auth.application.JwkService;
 import DM_plz.family_farm_main_server.auth.dto.CustomAuthentication;
+import DM_plz.family_farm_main_server.auth.dto.JwtSet;
 import DM_plz.family_farm_main_server.auth.token.dao.TokenRepository;
 import DM_plz.family_farm_main_server.auth.token.domain.Token;
 import io.jsonwebtoken.Claims;
@@ -43,8 +43,8 @@ class TokenProviderTest {
 	@MockBean
 	JwkService jwkService;
 
-	private String userId = "1";
-	private String familyId = "2";
+	private Long userId = 1L;
+	private Long familyId = 2L;
 	private int accessTokenExpireTime = 1000 * 3;
 
 	private int refreshTokenExpireTime = 1000 * 6;
@@ -66,7 +66,6 @@ class TokenProviderTest {
 	}
 
 	@Test
-	@Transactional
 	@DisplayName("access token 발급하기")
 	void generateAccessToken() {
 		//Given
@@ -80,8 +79,8 @@ class TokenProviderTest {
 
 		//When
 		String accessToken = tokenProvider.generateAccessToken(authentication, accessTokenExpireTime);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
-		boolean validateResult = tokenProvider.validateAccessToken(accessToken);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, refreshTokenExpireTime);
+		boolean validateResult = tokenProvider.validateToken(accessToken);
 		Claims claims = tokenProvider.parseClaim(accessToken);
 
 		//Then
@@ -93,7 +92,6 @@ class TokenProviderTest {
 	}
 
 	@Test
-	@Transactional
 	@DisplayName("refresh token 발급하기")
 	void generateRefreshToken() {
 		//Given
@@ -108,8 +106,8 @@ class TokenProviderTest {
 		Date expectRefreshTokenExpireTime = calender.getTime();
 
 		//When
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
-		boolean validateResult = tokenProvider.validateRefreshToken(refreshToken);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, refreshTokenExpireTime);
+		boolean validateResult = tokenProvider.validateToken(refreshToken);
 		Claims claims = tokenProvider.parseClaim(refreshToken);
 
 		//Then
@@ -122,7 +120,6 @@ class TokenProviderTest {
 	}
 
 	@Test
-	@Transactional
 	@DisplayName("만료된 access token 검증 시 오류 발생 확인")
 	void validateNoMatchMemberToken() throws InterruptedException {
 		//Given
@@ -132,7 +129,7 @@ class TokenProviderTest {
 		Thread.sleep(accessTokenExpireTime);
 
 		//When
-		Throwable thrown = catchThrowable(() -> tokenProvider.validateAccessToken(accessToken));
+		Throwable thrown = catchThrowable(() -> tokenProvider.validateToken(accessToken));
 
 		//Then
 		assertThat(thrown).isInstanceOf(ExpiredJwtException.class);
@@ -146,55 +143,63 @@ class TokenProviderTest {
 		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
 		String accessToken = tokenProvider.generateAccessToken(authentication, accessTokenExpireTime);
 		//When
-		Throwable thrown = catchThrowable(() -> tokenProvider.validateAccessToken(accessToken));
+		Throwable thrown = catchThrowable(() -> tokenProvider.validateToken(accessToken));
 
 		//Then
 		assertThat(thrown).isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@Test
-	@Transactional
 	@DisplayName("access token이 만료되어 refresh token으로 access token reissue하기")
 	void reissueToken() throws InterruptedException {
 		//Given
 		String subMockUp = "SUB_MOCKUP5";
 		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
 		String accessToken = tokenProvider.generateAccessToken(authentication, accessTokenExpireTime);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken,
+		String refreshToken = tokenProvider.generateRefreshToken(authentication,
 			accessTokenExpireTime * 10);
 
 		//When
 		Thread.sleep(accessTokenExpireTime);
-		String reissueAccessToken = tokenProvider.reissueAccessToken(accessToken, refreshToken);
-		boolean validateResult = tokenProvider.validateAccessToken(reissueAccessToken);
+		JwtSet jwtSet = tokenProvider.reissueToken(accessToken, refreshToken);
+		boolean validateAccessTokenResult = tokenProvider.validateToken(jwtSet.getAccessToken());
+		boolean validateRefreshTokenResult = tokenProvider.validateToken(jwtSet.getRefreshToken());
 
 		//Then
-		Claims claims = tokenProvider.parseClaim(reissueAccessToken);
-		assertThat(validateResult).isEqualTo(true);
-		assertThat(claims.getSubject()).isEqualTo(subMockUp);
-		assertThat(claims.get("user-id")).isEqualTo(userId);
-		assertThat(claims.get("family-id")).isEqualTo(familyId);
+		Claims accessTokenClaims = tokenProvider.parseClaim(jwtSet.getAccessToken());
+		Claims refreshTokenClaims = tokenProvider.parseClaim(jwtSet.getAccessToken());
 
-		Token token = tokenRepository.findByAccessToken(reissueAccessToken).orElseThrow(EntityNotFoundException::new);
-		assertThat(token.getAccessToken()).isEqualTo(reissueAccessToken);
+		assertThat(validateAccessTokenResult).isEqualTo(true);
+		assertThat(validateRefreshTokenResult).isEqualTo(true);
+
+		assertThat(accessTokenClaims.getSubject()).isEqualTo(subMockUp);
+		assertThat(accessTokenClaims.get("user-id")).isEqualTo(userId);
+		assertThat(accessTokenClaims.get("family-id")).isEqualTo(familyId);
+
+		assertThat(accessTokenClaims.getSubject()).isEqualTo(subMockUp);
+		assertThat(accessTokenClaims.get("user-id")).isEqualTo(userId);
+		assertThat(accessTokenClaims.get("family-id")).isEqualTo(familyId);
+
+		Token token = tokenRepository.findByRefreshToken(jwtSet.getRefreshToken())
+			.orElseThrow(EntityNotFoundException::new);
+		assertThat(token.getRefreshToken()).isEqualTo(jwtSet.getRefreshToken());
 	}
 
 	@Test
-	@Transactional
-	@DisplayName("access token도 만료되고 refresh token도 만료된 경우 오류 확인")
+	@DisplayName("access token도 만료되고 refresh token도 만료된 경우")
 	void expiredRefreshToken() throws InterruptedException {
 		String subMockUp = "SUB_MOCKUP6";
 		CustomAuthentication authentication = new CustomAuthentication(subMockUp, userId, familyId);
 		String accessToken = tokenProvider.generateAccessToken(authentication, accessTokenExpireTime);
-		String refreshToken = tokenProvider.generateRefreshToken(authentication, accessToken, refreshTokenExpireTime);
+		String refreshToken = tokenProvider.generateRefreshToken(authentication, refreshTokenExpireTime);
 
 		//When
 		Thread.sleep(accessTokenExpireTime);
-		String reissueAccessToken = tokenProvider.reissueAccessToken(accessToken, refreshToken);
-		boolean validateResult = tokenProvider.validateAccessToken(reissueAccessToken);
+		JwtSet jwtSet = tokenProvider.reissueToken(accessToken, refreshToken);
+		boolean validateResult = tokenProvider.validateToken(jwtSet.getRefreshToken());
 
 		//Then
-		Claims claims = tokenProvider.parseClaim(reissueAccessToken);
+		Claims claims = tokenProvider.parseClaim(jwtSet.getAccessToken());
 		assertThat(validateResult).isEqualTo(true);
 		assertThat(claims.getSubject()).isEqualTo(subMockUp);
 		assertThat(claims.get("user-id")).isEqualTo(userId);
@@ -203,5 +208,4 @@ class TokenProviderTest {
 		Token token = tokenRepository.findByAccessToken(reissueAccessToken).orElseThrow(EntityNotFoundException::new);
 		assertThat(token.getAccessToken()).isEqualTo(reissueAccessToken);
 	}
-
 }
