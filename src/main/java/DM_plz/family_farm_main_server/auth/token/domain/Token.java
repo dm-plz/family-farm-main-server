@@ -13,7 +13,7 @@ import lombok.Getter;
 public class Token {
 
 	@Id
-	private String id;
+	private String sub;
 
 	private String refreshToken;
 
