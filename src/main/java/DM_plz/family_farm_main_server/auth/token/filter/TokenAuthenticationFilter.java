@@ -37,7 +37,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		try {
-			tokenProvider.validateAccessToken(accessToken);
+			tokenProvider.validateToken(accessToken);
 		} catch (ExpiredJwtException e) {
 			handleException(response, "jwt이 만료되었습니다.", HttpServletResponse.SC_BAD_REQUEST);
 			return;
