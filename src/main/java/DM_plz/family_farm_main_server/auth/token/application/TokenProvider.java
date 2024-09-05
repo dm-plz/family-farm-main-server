@@ -60,11 +60,11 @@ public class TokenProvider {
 		return authorization.substring(TokenKey.TOKEN_PREFIX.length());
 	}
 
-	public JwtSetDTO generateSuccessToken(CustomAuthentication authentication) {
+	public JwtSet generateSuccessToken(CustomAuthentication authentication) {
 		String accessToken = generateAccessToken(authentication);
-		String refreshToken = generateRefreshToken(authentication, accessToken);
+		String refreshToken = generateRefreshToken(authentication);
 		String grantType = getGrantType();
-		return new JwtSetDTO(accessToken, refreshToken, grantType);
+		return new JwtSet(accessToken, refreshToken, grantType);
 	}
 
 	public String generateAccessToken(CustomAuthentication authentication) {
