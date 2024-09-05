@@ -8,16 +8,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
 import DM_plz.family_farm_main_server.common.exception.errorCode.ErrorCode;
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CommonException.class)
 	public ResponseEntity<ErrorResponse> commonError(CommonException e) {
 		ErrorCode errorCode = e.getErrorCode();
-		log.debug(errorCode.toString());
 		return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
 	}
 
