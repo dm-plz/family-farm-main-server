@@ -10,15 +10,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import DM_plz.family_farm_main_server.auth.application.IdTokenService;
-import DM_plz.family_farm_main_server.auth.dto.AccessTokenDTO;
 import DM_plz.family_farm_main_server.auth.dto.CustomAuthentication;
-import DM_plz.family_farm_main_server.auth.dto.JwtSetDTO;
+import DM_plz.family_farm_main_server.auth.dto.JwtSet;
 import DM_plz.family_farm_main_server.auth.dto.OidcSignIn;
-import DM_plz.family_farm_main_server.auth.dto.SubDTO;
 import DM_plz.family_farm_main_server.auth.dto.ValidateFamilyCode;
 import DM_plz.family_farm_main_server.auth.token.application.TokenProvider;
-import DM_plz.family_farm_main_server.common.exception.errorCode.AuthError;
-import DM_plz.family_farm_main_server.common.exception.exception.AuthException;
 import DM_plz.family_farm_main_server.family.application.FamilyService;
 import DM_plz.family_farm_main_server.member.application.MemberService;
 import DM_plz.family_farm_main_server.member.domain.Member;
@@ -54,10 +50,9 @@ public class AuthController {
 	}
 
 	@PatchMapping("/token/reissuance")
-	public ResponseEntity<AccessTokenDTO> reissueToken(@RequestBody JwtSetDTO jwtSetDTO) {
-		AccessTokenDTO accessTokenDTO = new AccessTokenDTO(
-			tokenProvider.reissueAccessToken(jwtSetDTO.getAccessToken(), jwtSetDTO.getRefreshToken()));
-		return ResponseEntity.ok(accessTokenDTO);
+	public ResponseEntity<JwtSet> reissueToken(@RequestBody JwtSet jwtSet) {
+		JwtSet reissuedJwtSet = tokenProvider.reissueToken(jwtSet.getAccessToken(), jwtSet.getRefreshToken());
+		return ResponseEntity.ok(reissuedJwtSet);
 	}
 
 	@GetMapping("/validate/family-code")
