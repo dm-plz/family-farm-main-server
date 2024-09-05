@@ -19,10 +19,10 @@ public class TokenService {
 	}
 
 	@Transactional
-	public void saveOrUpdate(String memberKey, String refreshToken, String accessToken) {
-		Token token = tokenRepository.findByAccessToken(accessToken)
-			.map(o -> o.updateRefreshToken(refreshToken))
-			.orElseGet(() -> new Token(memberKey, refreshToken, accessToken));
+	public void saveOrUpdate(String sub, Long userId, String refreshToken) {
+		Token token = tokenRepository.findByRefreshToken(refreshToken)
+			.map(findToken -> findToken.updateRefreshToken(refreshToken))
+			.orElseGet(() -> new Token(sub, userId, refreshToken));
 		tokenRepository.save(token);
 	}
 
@@ -32,14 +32,10 @@ public class TokenService {
 			.orElseThrow(EntityNotFoundException::new);
 	}
 
-	public Token findByAccessTokenOrThrow(String accessToken) {
-		return tokenRepository.findByAccessToken(accessToken)
-			.orElseThrow(() -> new EntityNotFoundException());
-	}
-
 	@Transactional
-	public void updateToken(String accessToken, Token token) {
-		token.updateAccessToken(accessToken);
+	public void updateToken(String refreshToken) {
+		Token token = tokenRepository.findByRefreshToken(refreshToken).orElseThrow();
+		token.updateRefreshToken(refreshToken);
 		tokenRepository.save(token);
 	}
 }
