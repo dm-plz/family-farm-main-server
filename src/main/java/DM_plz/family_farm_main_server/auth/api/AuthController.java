@@ -36,22 +36,20 @@ public class AuthController {
 	public ResponseEntity<JwtSet> signIn(@RequestBody OidcSignIn oidcSignIn) {
 		String customSub = idTokenService.getCustomSub(oidcSignIn);
 		Member findMember = memberService.findMember(customSub);
-		CustomAuthentication authentication = new CustomAuthentication(customSub, findMember);
-		JwtSet jwtSet = tokenProvider.generateSuccessToken(authentication);
+		JwtSet jwtSet = tokenProvider.generateJwtSet(new CustomAuthentication(customSub, findMember));
 		return ResponseEntity.ok(jwtSet);
 	}
 
 	@PostMapping("/oauth/sign-up/oidc")
 	public ResponseEntity<JwtSet> signUpWithOidc(@Valid @RequestBody SignUpDTO signUpDTO) {
 		Member signUpMember = memberService.signUp(signUpDTO);
-		CustomAuthentication authentication = new CustomAuthentication(signUpMember.getSub(), signUpMember);
-		JwtSet jwtSet = tokenProvider.generateSuccessToken(authentication);
+		JwtSet jwtSet = tokenProvider.generateJwtSet(new CustomAuthentication(signUpMember.getSub(), signUpMember));
 		return ResponseEntity.ok(jwtSet);
 	}
 
 	@PatchMapping("/token/reissuance")
 	public ResponseEntity<JwtSet> reissueToken(@RequestBody JwtSet jwtSet) {
-		JwtSet reissuedJwtSet = tokenProvider.reissueToken(jwtSet.getAccessToken(), jwtSet.getRefreshToken());
+		JwtSet reissuedJwtSet = tokenProvider.reissueToken(jwtSet);
 		return ResponseEntity.ok(reissuedJwtSet);
 	}
 
