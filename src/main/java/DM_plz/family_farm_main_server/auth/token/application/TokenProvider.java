@@ -60,7 +60,7 @@ public class TokenProvider {
 		return authorization.substring(TokenKey.TOKEN_PREFIX.length());
 	}
 
-	public JwtSet generateSuccessToken(CustomAuthentication authentication) {
+	public JwtSet generateJwtSet(CustomAuthentication authentication) {
 		String accessToken = generateAccessToken(authentication);
 		String refreshToken = generateRefreshToken(authentication);
 		String grantType = getGrantType();
@@ -133,7 +133,19 @@ public class TokenProvider {
 		String reissueAccessToken = generateAccessToken(getAuthentication(refreshToken));
 		String reissueRefreshToken = generateRefreshToken(getAuthentication(refreshToken));
 		tokenService.updateToken(reissueRefreshToken);
-		return new JwtSet(reissueAccessToken, reissueRefreshToken, "Bearer");
+		return new JwtSet(reissueAccessToken, reissueRefreshToken, GRANT_TYPE);
+	}
+
+	public JwtSet reissueToken(JwtSet jwtSet) {
+		String accessToken = jwtSet.getAccessToken();
+		String refreshToken = jwtSet.getRefreshToken();
+		validateTokenSignature(accessToken);
+		validateToken(refreshToken);
+
+		String reissueAccessToken = generateAccessToken(getAuthentication(refreshToken));
+		String reissueRefreshToken = generateRefreshToken(getAuthentication(refreshToken));
+		tokenService.updateToken(reissueRefreshToken);
+		return new JwtSet(reissueAccessToken, reissueRefreshToken, GRANT_TYPE);
 	}
 
 	public boolean validateToken(String token) {
