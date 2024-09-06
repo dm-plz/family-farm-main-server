@@ -27,11 +27,23 @@ public class IdTokenService {
 
 	public String getCustomSub(OidcSignIn oidcSignIn) {
 		isInvalidOAuthProvider(oidcSignIn.getOauthProvider());
-		DecodedJWT jwtOrigin = JWT.decode(oidcSignIn.getIdToken());
-		Jwk jwk = getJwk(oidcSignIn.getOauthProvider(), jwtOrigin);
-		JWTVerifier verifier = getVerifier(jwk);
-		DecodedJWT verifiedJWT = verifier.verify(jwtOrigin);
+		DecodedJWT verifiedJWT = verifyJWT(oidcSignIn.getOauthProvider(), oidcSignIn.getIdToken());
 		return oidcSignIn.getOauthProvider() + verifiedJWT.getSubject();
+	}
+
+	public void isInvalidOAuthProvider(String oauthProvider) {
+		try {
+			supportOAuthProvider.contains(oauthProvider);
+		} catch (IndexOutOfBoundsException e) {
+			throw new OidcException(OidcErrorCode.INVALID_PROVIDER);
+		}
+	}
+
+	public DecodedJWT verifyJWT(String oauthProvider, String jwt) {
+		DecodedJWT jwtOrigin = JWT.decode(jwt);
+		Jwk jwk = getJwk(oauthProvider, jwtOrigin);
+		JWTVerifier verifier = getVerifier(jwk);
+		return verifier.verify(jwtOrigin);
 	}
 
 	private Jwk getJwk(String oauthProvider, DecodedJWT jwtOrigin) {
@@ -50,13 +62,4 @@ public class IdTokenService {
 			throw new OidcException(OidcErrorCode.INVALID_PUBLIC_KEY);
 		}
 	}
-
-	public void isInvalidOAuthProvider(String oauthProvider) {
-		try {
-			supportOAuthProvider.contains(oauthProvider);
-		} catch (IndexOutOfBoundsException e) {
-			throw new OidcException(OidcErrorCode.INVALID_PROVIDER);
-		}
-	}
-
 }
