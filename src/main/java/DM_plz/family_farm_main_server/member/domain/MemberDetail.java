@@ -3,6 +3,7 @@ package DM_plz.family_farm_main_server.member.domain;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import DM_plz.family_farm_main_server.alert.domain.FCMCode;
 import DM_plz.family_farm_main_server.family.domain.Family;
 import DM_plz.family_farm_main_server.qna.domain.Answer;
 import DM_plz.family_farm_main_server.qna.domain.Comment;
@@ -47,6 +48,10 @@ public class MemberDetail {
 	private Family family;
 
 	@OneToMany(mappedBy = "memberDetail")
+	@Column(name = "fcm_codes")
+	private List<FCMCode> fcmCodes;
+
+	@OneToMany(mappedBy = "memberDetail")
 	@Column(name = "answers")
 	private List<Answer> answers;
 
@@ -73,7 +78,13 @@ public class MemberDetail {
 	@Column(name = "completed_survey_number")
 	private SurveyNumber completedSurveyNumber;
 
-	public void relationAccount(Member member) {
+	@Column(name = "is_current_question_completed")
+	private boolean isCurrentQuestionCompleted;
+
+	@Column(name = "allow_notification")
+	private boolean allowNotification;
+
+	public void relationMember(Member member) {
 		this.member = member;
 	}
 

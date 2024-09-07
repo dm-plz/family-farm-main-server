@@ -8,6 +8,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
 import DM_plz.family_farm_main_server.common.exception.errorCode.ErrorCode;
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
+import DM_plz.family_farm_main_server.common.exception.exception.FCMException;
 import DM_plz.family_farm_main_server.common.exception.exception.FamilyException;
 
 @RestControllerAdvice
@@ -20,9 +21,15 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(FamilyException.class)
-    public ResponseEntity<ErrorResponse> commonError(FamilyException e) {
+    public ResponseEntity<ErrorResponse> familyError(FamilyException e) {
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode, errorCode.getMessage());
+    }
+
+    @ExceptionHandler(FCMException.class)
+    public ResponseEntity<ErrorResponse> fcmError(FCMException e) {
+        ErrorCode errorCode = e.getErrorCode();
+        return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
     }
 
     /**
@@ -37,6 +44,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ErrorResponse.builder()
             .code(errorCode.getCode())
             .message(message)
+            .data(null)
             .build();
     }
 

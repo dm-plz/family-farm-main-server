@@ -9,3 +9,6 @@
 /out/
 # application-secret.yml 파일
 application-secret.yml
+
+# FCM SDK 파일
+dm-plz-family-farm-firebase-adminsdk-zg1zi-27b07f7c0f.json
