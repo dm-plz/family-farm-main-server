@@ -13,6 +13,7 @@ import DM_plz.family_farm_main_server.auth.application.IdTokenService;
 import DM_plz.family_farm_main_server.auth.dto.CustomAuthentication;
 import DM_plz.family_farm_main_server.auth.dto.JwtSet;
 import DM_plz.family_farm_main_server.auth.dto.OidcSignIn;
+import DM_plz.family_farm_main_server.auth.dto.RefreshTokenDTO;
 import DM_plz.family_farm_main_server.auth.dto.ValidateFamilyCode;
 import DM_plz.family_farm_main_server.auth.token.application.TokenProvider;
 import DM_plz.family_farm_main_server.family.application.FamilyService;
@@ -48,8 +49,8 @@ public class AuthController {
 	}
 
 	@PatchMapping("/token/reissuance")
-	public ResponseEntity<JwtSet> reissueToken(@RequestBody JwtSet jwtSet) {
-		JwtSet reissuedJwtSet = tokenProvider.reissueToken(jwtSet);
+	public ResponseEntity<JwtSet> reissueToken(@RequestBody RefreshTokenDTO refreshTokenDTO) {
+		JwtSet reissuedJwtSet = tokenProvider.reissueToken(refreshTokenDTO);
 		return ResponseEntity.ok(reissuedJwtSet);
 	}
 
