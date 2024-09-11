@@ -56,10 +56,14 @@ public class IdTokenService {
 
 	private static JWTVerifier getVerifier(Jwk jwk) {
 		try {
-			Algorithm algorithm = Algorithm.RSA256((RSAPublicKey)jwk.getPublicKey(), null);
+			Algorithm algorithm = Algorithm.RSA256(getPublicKey(jwk), null);
 			return JWT.require(algorithm).build();
 		} catch (InvalidPublicKeyException e) {
 			throw new OidcException(OidcErrorCode.INVALID_PUBLIC_KEY);
 		}
+	}
+
+	private static RSAPublicKey getPublicKey(Jwk jwk) throws InvalidPublicKeyException {
+		return (RSAPublicKey)jwk.getPublicKey();
 	}
 }
