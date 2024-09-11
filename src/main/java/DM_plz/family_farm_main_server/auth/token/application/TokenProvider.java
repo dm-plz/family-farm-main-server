@@ -114,22 +114,14 @@ public class TokenProvider {
 		return new CustomAuthentication(sub, userId, familyId);
 	}
 
-	public JwtSet reissueToken(String accessToken, String refreshToken) {
-		validateTokenSignature(accessToken);
-		validateToken(refreshToken);
-
-		String reissueAccessToken = generateAccessToken(getAuthentication(refreshToken));
-		String reissueRefreshToken = generateRefreshToken(getAuthentication(refreshToken));
-		tokenService.updateToken(reissueRefreshToken);
-		return new JwtSet(reissueAccessToken, reissueRefreshToken, GRANT_TYPE);
-	}
-
-	public JwtSet reissueToken(JwtSet jwtSet) {
-		String accessToken = jwtSet.getAccessToken();
-		String refreshToken = jwtSet.getRefreshToken();
-		validateTokenSignature(accessToken);
-		validateToken(refreshToken);
-
+	public JwtSet reissueToken(RefreshTokenDTO refreshTokenDTO) {
+		String refreshToken = refreshTokenDTO.getRefreshToken();
+		try {
+			validateToken(refreshToken);
+		} catch (TokenExpiredException e) {
+			throw new TokenException(TokenError.EXPIRED_REFRESH_TOKEN, refreshToken);
+		}
+		tokenService.findByRefreshToken(refreshToken);
 		String reissueAccessToken = generateAccessToken(getAuthentication(refreshToken));
 		String reissueRefreshToken = generateRefreshToken(getAuthentication(refreshToken));
 		tokenService.updateToken(reissueRefreshToken);
