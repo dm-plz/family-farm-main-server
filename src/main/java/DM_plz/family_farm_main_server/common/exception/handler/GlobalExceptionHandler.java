@@ -7,8 +7,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
 import DM_plz.family_farm_main_server.common.exception.errorCode.ErrorCode;
+import DM_plz.family_farm_main_server.common.exception.exception.AuthException;
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import DM_plz.family_farm_main_server.common.exception.exception.FamilyException;
+import DM_plz.family_farm_main_server.common.exception.exception.OidcException;
+import DM_plz.family_farm_main_server.common.exception.exception.TokenException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
@@ -21,6 +24,24 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(FamilyException.class)
 	public ResponseEntity<ErrorResponse> commonError(FamilyException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage());
+	}
+
+	@ExceptionHandler(AuthException.class)
+	public ResponseEntity<ErrorResponse> authError(AuthException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage());
+	}
+
+	@ExceptionHandler(OidcException.class)
+	public ResponseEntity<ErrorResponse> oidcError(OidcException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage());
+	}
+
+	@ExceptionHandler(TokenException.class)
+	public ResponseEntity<ErrorResponse> tokenError(TokenException e) {
 		ErrorCode errorCode = e.getErrorCode();
 		return handleExceptionInternal(errorCode, errorCode.getMessage());
 	}
