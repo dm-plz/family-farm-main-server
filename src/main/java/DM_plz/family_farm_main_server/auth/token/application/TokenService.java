@@ -30,7 +30,7 @@ public class TokenService {
 	@Transactional
 	public Token findBySub(String sub) {
 		return tokenRepository.findById(sub)
-			.orElseThrow(EntityNotFoundException::new);
+			.orElseThrow(() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null));
 	}
 
 	@Transactional
