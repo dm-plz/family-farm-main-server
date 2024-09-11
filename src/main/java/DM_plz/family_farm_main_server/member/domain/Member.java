@@ -43,8 +43,4 @@ public class Member {
 	public void relationMemberDetails(MemberDetail memberDetail) {
 		this.memberDetail = memberDetail;
 	}
-
-	public void relationMemberDetails(MemberDetail memberDetail) {
-		this.memberDetail = memberDetail;
-	}
 }
