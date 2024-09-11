@@ -14,6 +14,7 @@ import DM_plz.family_farm_main_server.auth.application.JwkService;
 import DM_plz.family_farm_main_server.auth.dto.CustomAuthentication;
 import DM_plz.family_farm_main_server.auth.token.dao.TokenRepository;
 import DM_plz.family_farm_main_server.auth.token.domain.Token;
+import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import io.jsonwebtoken.Claims;
 import jakarta.persistence.EntityNotFoundException;
 
@@ -59,7 +60,7 @@ class TokenServiceTest {
 		Throwable thrown = catchThrowable(() -> tokenService.findBySub(sub));
 		//Then
 
-		assertThat(thrown).isInstanceOf(EntityNotFoundException.class);
+		assertThat(thrown).isInstanceOf(CommonException.class);
 	}
 
 	@Test
