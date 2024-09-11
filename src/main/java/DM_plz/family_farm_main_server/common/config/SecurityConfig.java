@@ -46,15 +46,6 @@ public class SecurityConfig {
 			)
 
 			.addFilterBefore(new TokenAuthenticationFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class);
-
-		// .addFilterBefore(tokenAuthenticationFilter,
-		// 	UsernamePasswordAuthenticationFilter.class)
-		// .addFilterBefore(new TokenExceptionFilter(), tokenAuthenticationFilter.getClass())
-		//
-		// .exceptionHandling(exceptions -> exceptions
-		// 	.authenticationEntryPoint(new CustomAuthenticationEntryPoint())
-		// 	.accessDeniedHandler(new CustomAccessDeniedHandler()));
-
 		return http.build();
 	}
 }
