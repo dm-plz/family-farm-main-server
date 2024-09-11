@@ -137,22 +137,7 @@ public class TokenProvider {
 	}
 
 	public boolean validateToken(String token) {
-		try {
-			verifier.verify(token);
-		} catch (SignatureVerificationException e) {
-			throw new RuntimeException(e);
-		} catch (ExpiredJwtException e) {
-			throw new RuntimeException(e);
-		}
-		return true;
-	}
-
-	public boolean validateTokenSignature(String token) {
-		try {
-			verifier.verify(token);
-		} catch (SignatureVerificationException e) {
-			throw new RuntimeException(e);
-		}
+		verifier.verify(token);
 		return true;
 	}
 
