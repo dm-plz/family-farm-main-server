@@ -43,12 +43,8 @@ public class TokenProvider {
 	private final TokenService tokenService;
 
 	@PostConstruct
-	private void setSecretKey() {
+	private void setting() {
 		secretKey = Keys.hmacShaKeyFor(key.getBytes());
-	}
-
-	@PostConstruct
-	private void setVerifier() {
 		verifier = JWT.require(Algorithm.HMAC512(secretKey.getEncoded())).build();
 	}
 
