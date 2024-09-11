@@ -13,7 +13,6 @@ import DM_plz.family_farm_main_server.common.exception.errorCode.CommonErrorCode
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import DM_plz.family_farm_main_server.member.dao.MemberDetailRepository;
 import DM_plz.family_farm_main_server.member.dao.MemberRepository;
-import DM_plz.family_farm_main_server.member.domain.AuthProvider;
 import DM_plz.family_farm_main_server.member.domain.BirthType;
 import DM_plz.family_farm_main_server.member.domain.GroupRole;
 import DM_plz.family_farm_main_server.member.domain.Member;
@@ -43,17 +42,16 @@ class MemberServiceTest {
 		// Given
 		SignUpDTO signUpDTO = SignUpDTO.builder()
 			.nickname("jiwon")
-			.OAuthProvider(AuthProvider.KAKAO)
 			.birth(LocalDateTime.now())
 			.birthType(BirthType.SOLAR)
-			.email("jrimit@gmail.com")
+			.sub("SUBMOCKUP")
 			.groupRole(GroupRole.SON)
 			.familyCode(null)
 			.build();
 
 		// When
 		Member newMember = memberService.signUp(signUpDTO);
-		Member findMember = memberRepository.findByEmail(signUpDTO.getEmail())
+		Member findMember = memberRepository.findBySub(signUpDTO.getSub())
 			.orElseThrow(
 				() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null)
 			);
@@ -64,7 +62,7 @@ class MemberServiceTest {
 			);
 
 		// Then
-		Assertions.assertEquals(newMember.getEmail(), findMember.getEmail());
+		Assertions.assertEquals(newMember.getSub(), findMember.getSub());
 		Assertions.assertEquals("jiwon", findMember.getMemberDetail().getNickname());
 	}
 
@@ -79,23 +77,22 @@ class MemberServiceTest {
 		// Given
 		SignUpDTO signUpDTO = SignUpDTO.builder()
 			.nickname("jiwon")
-			.OAuthProvider(AuthProvider.KAKAO)
 			.birth(LocalDateTime.now())
 			.birthType(BirthType.SOLAR)
-			.email("jrimit@gmail.com")
+			.sub("SUBMOCKUP")
 			.groupRole(GroupRole.SON)
 			.familyCode("asdjnaoojjkd")
 			.build();
 
 		// When
 		Member newMember = memberService.signUp(signUpDTO);
-		Member findMember = memberRepository.findByEmail(signUpDTO.getEmail())
+		Member findMember = memberRepository.findBySub(signUpDTO.getSub())
 			.orElseThrow(
 				() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null)
 			);
 
 		// Then
-		Assertions.assertEquals(newMember.getEmail(), findMember.getEmail());
+		Assertions.assertEquals(newMember.getSub(), findMember.getSub());
 		Assertions.assertEquals("jiwon", findMember.getMemberDetail().getNickname());
 		Assertions.assertEquals("familycode", findMember.getMemberDetail().getFamily().getInviteCode());
 	}

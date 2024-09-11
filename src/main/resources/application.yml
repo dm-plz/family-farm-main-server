@@ -7,12 +7,10 @@ spring:
       application-secret.yml
 
   jpa:
-    hibernate:
-      ddl-auto: create
     properties:
       hibernate:
-        format_sql: true
-    show-sql: true
+        ddl-auto: create
+        dialect: org.hibernate.dialect.H2Dialect
 
 logging:
   level:
