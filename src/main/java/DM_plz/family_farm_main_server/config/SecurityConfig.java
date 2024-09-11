@@ -18,7 +18,8 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 				.requestMatchers(
 					"/",
-					"/h2-console/**"
+					"/h2-console/**",
+					"/emoji/**"
 				)
 				.permitAll()
 				.anyRequest()
