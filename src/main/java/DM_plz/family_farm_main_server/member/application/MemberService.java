@@ -31,7 +31,7 @@ public class MemberService {
 		Member newMember = signUpMapper.toMember(signUpDTO);
 		MemberDetail newMemberDetail = signUpMapper.toMemberDetail(signUpDTO);
 
-		newMemberDetail.relationAccount(newMember);
+		newMemberDetail.relationMember(newMember);
 		if (signUpDTO.getFamilyCode() != null) {
 			Family family = familyRepository.findByInviteCode(signUpDTO.getFamilyCode())
 				.orElseThrow(
