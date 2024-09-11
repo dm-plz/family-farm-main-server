@@ -109,8 +109,13 @@ public class TokenProvider {
 	public CustomAuthentication getAuthentication(String token) {
 		Claims claims = forceParseClaim(token);
 		String sub = claims.getSubject();
-		Long userId = (Long)claims.get("user-id");
-		Long familyId = (Long)claims.get("family-id");
+		Long userId = Long.valueOf((Integer)claims.get("user-id"));
+		Long familyId;
+		try {
+			familyId = Long.valueOf((Integer)claims.get("family-id"));
+		} catch (Exception e) {
+			familyId = null;
+		}
 		return new CustomAuthentication(sub, userId, familyId);
 	}
 
