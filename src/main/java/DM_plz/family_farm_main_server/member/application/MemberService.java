@@ -45,4 +45,8 @@ public class MemberService {
 
 		return newMember;
 	}
+
+	public Member findMember(String sub) {
+		return memberRepository.findBySub(sub).orElseThrow(() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null));
+	}
 }

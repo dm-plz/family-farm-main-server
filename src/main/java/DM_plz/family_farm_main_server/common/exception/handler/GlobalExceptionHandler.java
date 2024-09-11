@@ -7,52 +7,73 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
 import DM_plz.family_farm_main_server.common.exception.errorCode.ErrorCode;
+import DM_plz.family_farm_main_server.common.exception.exception.AuthException;
 import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import DM_plz.family_farm_main_server.common.exception.exception.FamilyException;
+import DM_plz.family_farm_main_server.common.exception.exception.OidcException;
+import DM_plz.family_farm_main_server.common.exception.exception.TokenException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(CommonException.class)
-    public ResponseEntity<ErrorResponse> commonError(CommonException e) {
-        ErrorCode errorCode = e.getErrorCode();
-        return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
-    }
+	@ExceptionHandler(CommonException.class)
+	public ResponseEntity<ErrorResponse> commonError(CommonException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage(), e.getData());
+	}
 
-    @ExceptionHandler(FamilyException.class)
-    public ResponseEntity<ErrorResponse> commonError(FamilyException e) {
-        ErrorCode errorCode = e.getErrorCode();
-        return handleExceptionInternal(errorCode, errorCode.getMessage());
-    }
+	@ExceptionHandler(FamilyException.class)
+	public ResponseEntity<ErrorResponse> commonError(FamilyException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage());
+	}
 
-    /**
-     * Exception에서 data를 사용하지 않는 경우에 사용한다.
-     */
-    private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message) {
-        return ResponseEntity.status(errorCode.getHttpStatus())
-            .body(makeErrorResponse(errorCode, message));
-    }
+	@ExceptionHandler(AuthException.class)
+	public ResponseEntity<ErrorResponse> authError(AuthException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage());
+	}
 
-    private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message) {
-        return ErrorResponse.builder()
-            .code(errorCode.getCode())
-            .message(message)
-            .build();
-    }
+	@ExceptionHandler(OidcException.class)
+	public ResponseEntity<ErrorResponse> oidcError(OidcException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage());
+	}
 
-    /**
-     * Exception에서 data를 사용하는 경우에 사용한다.
-     */
-    private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message, Object data) {
-        return ResponseEntity.status(errorCode.getHttpStatus())
-            .body(makeErrorResponse(errorCode, message, data));
-    }
+	@ExceptionHandler(TokenException.class)
+	public ResponseEntity<ErrorResponse> tokenError(TokenException e) {
+		ErrorCode errorCode = e.getErrorCode();
+		return handleExceptionInternal(errorCode, errorCode.getMessage());
+	}
 
-    private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message, Object data) {
-        return ErrorResponse.builder()
-            .code(errorCode.getCode())
-            .message(message)
-            .data(data)
-            .build();
-    }
+	/**
+	 * Exception에서 data를 사용하지 않는 경우에 사용한다.
+	 */
+	private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message) {
+		return ResponseEntity.status(errorCode.getHttpStatus())
+			.body(makeErrorResponse(errorCode, message));
+	}
+
+	private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message) {
+		return ErrorResponse.builder()
+			.code(errorCode.getCode())
+			.message(message)
+			.build();
+	}
+
+	/**
+	 * Exception에서 data를 사용하는 경우에 사용한다.
+	 */
+	private ResponseEntity<ErrorResponse> handleExceptionInternal(ErrorCode errorCode, String message, Object data) {
+		return ResponseEntity.status(errorCode.getHttpStatus())
+			.body(makeErrorResponse(errorCode, message, data));
+	}
+
+	private ErrorResponse makeErrorResponse(ErrorCode errorCode, String message, Object data) {
+		return ErrorResponse.builder()
+			.code(errorCode.getCode())
+			.message(message)
+			.data(data)
+			.build();
+	}
 }
