@@ -73,8 +73,9 @@ public class MemberDetail {
 	@Column(name = "completed_survey_number")
 	private SurveyNumber completedSurveyNumber;
 
-	public void relationAccount(Member member) {
+	public void relationMember(Member member) {
 		this.member = member;
+		member.relationMemberDetails(this);
 	}
 
 	public void relationFamily(Family family) {

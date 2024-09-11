@@ -40,7 +40,7 @@ public class Member {
 	@Column(name = "create_at")
 	private LocalDateTime createAt;
 
-	public void setMemberDetail(MemberDetail memberDetail) {
+	public void relationMemberDetails(MemberDetail memberDetail) {
 		this.memberDetail = memberDetail;
 	}
 }
