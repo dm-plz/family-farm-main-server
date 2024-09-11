@@ -32,7 +32,7 @@ public class AuthController {
 	private final IdTokenService idTokenService;
 	private final TokenProvider tokenProvider;
 
-	@PostMapping("/oauth/sign-in/oidc")
+	@PostMapping("/sign-in/oidc")
 	public ResponseEntity<JwtSet> signIn(@RequestBody OidcSignIn oidcSignIn) {
 		String customSub = idTokenService.getCustomSub(oidcSignIn);
 		Member findMember = memberService.findMember(customSub);
@@ -40,7 +40,7 @@ public class AuthController {
 		return ResponseEntity.ok(jwtSet);
 	}
 
-	@PostMapping("/oauth/sign-up/oidc")
+	@PostMapping("/sign-up/oidc")
 	public ResponseEntity<JwtSet> signUpWithOidc(@Valid @RequestBody SignUpDTO signUpDTO) {
 		Member signUpMember = memberService.signUp(signUpDTO);
 		JwtSet jwtSet = tokenProvider.generateJwtSet(new CustomAuthentication(signUpMember.getSub(), signUpMember));
