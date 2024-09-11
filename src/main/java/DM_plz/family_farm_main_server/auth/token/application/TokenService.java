@@ -5,7 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import DM_plz.family_farm_main_server.auth.token.dao.TokenRepository;
 import DM_plz.family_farm_main_server.auth.token.domain.Token;
-import jakarta.persistence.EntityNotFoundException;
+import DM_plz.family_farm_main_server.common.exception.errorCode.CommonErrorCode;
+import DM_plz.family_farm_main_server.common.exception.exception.CommonException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -30,6 +31,12 @@ public class TokenService {
 	public Token findBySub(String sub) {
 		return tokenRepository.findById(sub)
 			.orElseThrow(EntityNotFoundException::new);
+	}
+
+	@Transactional
+	public Token findByRefreshToken(String refreshToken) {
+		return tokenRepository.findByRefreshToken(refreshToken)
+			.orElseThrow(() -> new CommonException(CommonErrorCode.NULL_POINTER_EXCEPTION, null));
 	}
 
 	@Transactional
