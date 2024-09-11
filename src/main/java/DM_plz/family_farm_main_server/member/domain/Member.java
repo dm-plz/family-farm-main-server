@@ -39,4 +39,8 @@ public class Member {
 	@CreationTimestamp
 	@Column(name = "create_at")
 	private LocalDateTime createAt;
+
+	public void setMemberDetail(MemberDetail memberDetail) {
+		this.memberDetail = memberDetail;
+	}
 }
