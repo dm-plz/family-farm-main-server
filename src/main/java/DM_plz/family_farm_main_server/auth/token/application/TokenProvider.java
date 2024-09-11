@@ -13,13 +13,16 @@ import org.springframework.stereotype.Component;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.SignatureVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
 
 import DM_plz.family_farm_main_server.auth.dto.CustomAuthentication;
 import DM_plz.family_farm_main_server.auth.dto.JwtSet;
+import DM_plz.family_farm_main_server.auth.dto.RefreshTokenDTO;
 import DM_plz.family_farm_main_server.auth.token.constants.TokenKey;
 import DM_plz.family_farm_main_server.common.exception.errorCode.AuthError;
+import DM_plz.family_farm_main_server.common.exception.errorCode.TokenError;
 import DM_plz.family_farm_main_server.common.exception.exception.AuthException;
+import DM_plz.family_farm_main_server.common.exception.exception.TokenException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
