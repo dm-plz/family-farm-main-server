@@ -8,7 +8,7 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
 
 	private final String subject;
 	private final Long userId;
-	private final Long familyId;
+	private Long familyId;
 
 	public CustomAuthentication(String subject, Long userId, Long familyId) {
 		super(null);
@@ -22,7 +22,8 @@ public class CustomAuthentication extends AbstractAuthenticationToken {
 		super(null);
 		this.subject = subject;
 		this.userId = member.getId();
-		this.familyId = member.getMemberDetail().getFamily().getId();
+		if (member.getMemberDetail().getFamily() != null)
+			this.familyId = member.getMemberDetail().getFamily().getId();
 		setAuthenticated(true);
 	}
 
