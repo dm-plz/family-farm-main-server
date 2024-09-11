@@ -9,12 +9,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import DM_plz.family_farm_main_server.auth.token.application.TokenProvider;
 import DM_plz.family_farm_main_server.auth.token.constants.TokenKey;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SecurityException;
-import jakarta.persistence.EntityNotFoundException;
+import DM_plz.family_farm_main_server.common.exception.ErrorResponse;
+import DM_plz.family_farm_main_server.common.exception.errorCode.TokenError;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,6 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 	private final TokenProvider tokenProvider;
+	private final ObjectMapper objectMapper = new ObjectMapper();
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
@@ -38,18 +41,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 		try {
 			tokenProvider.validateToken(accessToken);
-		} catch (ExpiredJwtException e) {
-			handleException(response, "jwt이 만료되었습니다.", HttpServletResponse.SC_BAD_REQUEST);
+		} catch (TokenExpiredException e) {
+			handleException(response, TokenError.EXPIRED_ACCESS_TOKEN, accessToken);
 			return;
-		} catch (MalformedJwtException e) {
-			handleException(response, "jwt 형식이 올바르지 않습니다.", HttpServletResponse.SC_BAD_REQUEST);
+		} catch (JWTVerificationException e) {
+			handleException(response, TokenError.FAIL_VERIFY_JWT, accessToken);
 			return;
-		} catch (SecurityException e) {
-			handleException(response, "jwt 서명이 올바르지 않습니다.", HttpServletResponse.SC_BAD_REQUEST);
-		} catch (EntityNotFoundException e) {
-			handleException(response, "access token이 만료되었거나 유효하지 않은 사용자 입니다.", HttpServletResponse.SC_BAD_REQUEST);
 		}
-
 		setAuthentication(accessToken);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		System.out.println("accessToken = " + accessToken);
@@ -59,10 +57,18 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
 	}
 
-	private void handleException(HttpServletResponse response, String message, int status) throws IOException {
-		response.setStatus(status);
-		response.setContentType("application/json");
-		response.getWriter().write(message);
+	private void handleException(HttpServletResponse response, TokenError tokenError, String accessToken) throws IOException {
+		// GlobalExceptionHandler를 사용할 수 없기 때문에 필터 내부에서 자체적으로 예외 핸들링
+		response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+		response.setCharacterEncoding("UTF-8");
+		response.setStatus(tokenError.getHttpStatus().value());
+		ErrorResponse errorResponse = ErrorResponse.builder()
+			.code(tokenError.getCode())
+			.message(tokenError.getMessage())
+			.data(accessToken)
+			.build();
+
+		response.getOutputStream().write(objectMapper.writeValueAsString(errorResponse).getBytes());
 	}
 
 	private void setAuthentication(String accessToken) {
