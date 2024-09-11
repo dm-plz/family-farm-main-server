@@ -16,7 +16,10 @@ public enum TokenError implements ErrorCode {
 
 	// [INVALID]
 	INVALID_JWT_SIGNATURE(HttpStatus.BAD_REQUEST, "TOKEN-0004", "jwt 서명이 올바르지 않습니다."),
-	INVALID_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN-0005", "access token이 유효하지 않습니다.");
+	INVALID_ACCESS_TOKEN(HttpStatus.BAD_REQUEST, "TOKEN-0005", "access token이 유효하지 않습니다."),
+
+	// [FAIL]
+	FAIL_VERIFY_JWT(HttpStatus.BAD_REQUEST, "TOKEN-0006", "jwt 검증에 실패했습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String code;
