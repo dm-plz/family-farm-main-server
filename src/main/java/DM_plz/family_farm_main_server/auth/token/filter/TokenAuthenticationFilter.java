@@ -3,7 +3,10 @@ package DM_plz.family_farm_main_server.auth.token.filter;
 import static org.springframework.http.HttpHeaders.*;
 
 import java.io.IOException;
+import java.util.Objects;
 
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ObjectUtils;
@@ -34,7 +37,9 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 		FilterChain filterChain) throws ServletException, IOException {
 		String accessToken = resolveAccessToken(request);
 
-		if (accessToken == null) {
+		// 로그인, 회원가입, 토큰 재발행 시
+		// 이외의 경우는 Spring Security에서 차단됨
+		if (accessToken == null || isReissueToken(request)) {
 			filterChain.doFilter(request, response);
 			return;
 		}
@@ -49,12 +54,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 			return;
 		}
 		setAuthentication(accessToken);
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		System.out.println("accessToken = " + accessToken);
-		System.out.println("authentication = " + authentication.toString());
-
 		filterChain.doFilter(request, response);
+	}
 
+	private static boolean isReissueToken(HttpServletRequest request) {
+		// 토큰 재발급 요청 확인 (Http 메서드가 PATCH이고 요청 URI가 /auth/token/reissuance인지 확인)
+		return Objects.equals(request.getMethod(), HttpMethod.PATCH.toString()) && Objects.equals(request.getRequestURI(), "\"/auth/token/reissuance\"");
 	}
 
 	private void handleException(HttpServletResponse response, TokenError tokenError, String accessToken) throws IOException {
