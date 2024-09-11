@@ -1,7 +1,11 @@
 # 환경과 관련된 파일
 /.gradle/
 /.idea/
+/generated/
+**/generated/
 # 빌드와 관련된 파일
 /build/
 /bin/
 /out/
+# application-secret.yml 파일
+application-secret.yml
