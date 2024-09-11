@@ -102,14 +102,6 @@ public class TokenProvider {
 			.compact();
 	}
 
-	public long getAccessTokenExpireTime() {
-		return ACCESS_TOKEN_EXPIRE_TIME;
-	}
-
-	public long getRefreshTokenExpireTime() {
-		return REFRESH_TOKEN_EXPIRE_TIME;
-	}
-
 	public String getGrantType() {
 		return GRANT_TYPE;
 	}
